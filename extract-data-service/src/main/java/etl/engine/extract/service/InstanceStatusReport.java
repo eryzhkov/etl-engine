@@ -3,6 +3,7 @@ package etl.engine.extract.service;
 import etl.engine.extract.model.event.Event;
 import etl.engine.extract.model.event.EventInfo;
 import etl.engine.extract.model.workload.Workload;
+import etl.engine.extract.service.messaging.MessagingService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class InstanceStatusReport {
 
     private final InstanceStatus instanceStatus;
+    private final MessagingService messagingService;
 
     @Scheduled(
             initialDelayString = "${eds.status-report.initial-delay}",
@@ -40,6 +42,7 @@ public class InstanceStatusReport {
                 new EventInfo("notification", "status"),
                 payload
         );
+        messagingService.sendInstanceStatusReport(event);
         log.info("The report is generated: {}", event);
     }
 
