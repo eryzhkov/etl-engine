@@ -18,6 +18,11 @@ services:
     build: extract-data-service
     container_name: etl-eds
     restart: "no"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
+      - EDS_TOPICS_HEARTBEAT=ems.heartbeat
+      - EDS_STATUS_REPORT_INITIAL_DELAY=5000
+      - EDS_STATUS_REPORT_FIXED_RATE=10000
     ports:
       - "8081:8080"
     healthcheck:
@@ -26,3 +31,27 @@ services:
       timeout: 5s
       start_period: 30s
       retries: 5
+
+  etl-kafka:
+    image: apache/kafka:3.9.0
+    container_name: etl-kafka
+    restart: "no"
+    environment:
+      KAFKA_NODE_ID: 0
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 0@etl-kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 1
+    healthcheck:
+      test: [ "CMD", "/opt/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
+      interval: 5s
+      timeout: 3s
+      start_period: 3s
+    ports:
+      - "9092:9092"

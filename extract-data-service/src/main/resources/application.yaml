@@ -1,6 +1,10 @@
 spring:
   application:
     name: extract-data-service
+  kafka:
+    bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 management:
   endpoints:
     web:
@@ -8,5 +12,7 @@ management:
         include: health, info
 eds:
   status-report:
-    initial-delay: 3000
-    fixed-rate: 5000
+    initial-delay: "${EDS_STATUS_REPORT_INITIAL_DELAY}"
+    fixed-rate: "${EDS_STATUS_REPORT_FIXED_RATE}"
+  topics:
+    heartbeat: "${EDS_TOPICS_HEARTBEAT}"
