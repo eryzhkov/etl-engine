@@ -1,7 +1,10 @@
 package etl.engine.extract.service;
 
+import etl.engine.extract.model.workload.Workload;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -15,5 +18,20 @@ public class InstanceStatus {
 
     public UUID getInstanceId() {
         return INSTANCE_ID;
+    }
+
+    public String getType() {
+        // The default instance type.
+        return "extract";
+    }
+
+    public String getState() {
+        // At the moment the instance can report the 'idle' state only.
+        return "idle";
+    }
+
+    public List<Workload> getWorkload() {
+        // At the moment the instance can report no workload.
+        return Collections.emptyList();
     }
 }
