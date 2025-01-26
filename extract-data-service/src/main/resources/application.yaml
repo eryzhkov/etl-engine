@@ -1,3 +1,8 @@
 spring:
   application:
     name: extract-data-service
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
