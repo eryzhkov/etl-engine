@@ -1,3 +1,10 @@
 spring:
   application:
     name: etl-management-service
+ems:
+  kafka:
+    bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
+    topics:
+      heartbeat: "${EMS_TOPICS_HEARTBEAT}"
+    consumer:
+      group: "${spring.application.name}"
