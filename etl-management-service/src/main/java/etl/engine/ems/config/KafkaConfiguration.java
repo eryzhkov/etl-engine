@@ -22,9 +22,6 @@ public class KafkaConfiguration {
     @Value("${ems.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    //@Value("${ems.kafka.topics.heartbeat}")
-    //private String heartBeatTopicName;
-
     @Value("${ems.kafka.consumer.group}")
     private String consumerGroupName;
 
@@ -49,15 +46,5 @@ public class KafkaConfiguration {
         factory.setConcurrency(2);
         return factory;
     }
-
-    /*
-    @Bean
-    public NewTopic heartBeatTopic() {
-        return TopicBuilder
-                .name(heartBeatTopicName)
-                .partitions(1)
-                .build();
-    }
-     */
 
 }
