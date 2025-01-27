@@ -1,7 +1,41 @@
 spring:
   application:
     name: etl-management-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "${SPRING_DATASOURCE_URL}"
+    username: "${SPRING_DATASOURCE_USERNAME}"
+    password: "${SPRING_DATASOURCE_PASSWORD}"
+    continue-on-error: false
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 0
+      connection-timeout: 5000
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: "${ems.database.schema}"
+        format_sql: true
+  liquibase:
+    drop-first: false
+    change-log: classpath:/db-changelog/db-changelog-master.xml
+    default-schema: "${ems.database.schema}"
+    database-change-log-table: "lb_databasechangelog"
+    database-change-log-lock-table: "lb_databasechangeloglock"
+logging:
+  level:
+    root: "info"
+    org.hibernate.orm.jdbc.bind: "trace"
+    org.springframework.transaction.support: "debug"
+    etl.engine.ems: "debug"
+
 ems:
+  database:
+    schema: "${EMS_DATABASE_SCHEMA}"
   kafka:
     bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
     topics:

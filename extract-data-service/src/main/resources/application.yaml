@@ -12,6 +12,7 @@ management:
         include: health, info
 eds:
   status-report:
+    enabled: "${EDS_STATUS_REPORT_ENABLED:false}"
     initial-delay: "${EDS_STATUS_REPORT_INITIAL_DELAY}"
     fixed-rate: "${EDS_STATUS_REPORT_FIXED_RATE}"
   topics:

@@ -10,6 +10,10 @@ services:
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
       - EMS_TOPICS_HEARTBEAT=ems.heartbeat
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://etl-postgres-db:5432/etl
+      - SPRING_DATASOURCE_USERNAME=etl
+      - SPRING_DATASOURCE_PASSWORD=etl
+      - EMS_DATABASE_SCHEMA=ems
     ports:
       - "8080:8080"
     healthcheck:
@@ -27,6 +31,7 @@ services:
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
       - EDS_TOPICS_HEARTBEAT=ems.heartbeat
+      - EDS_STATUS_REPORT_ENABLED=true
       - EDS_STATUS_REPORT_INITIAL_DELAY=5000
       - EDS_STATUS_REPORT_FIXED_RATE=10000
     ports:
