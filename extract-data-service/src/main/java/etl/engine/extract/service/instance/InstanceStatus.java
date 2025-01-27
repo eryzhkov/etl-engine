@@ -1,4 +1,4 @@
-package etl.engine.extract.service;
+package etl.engine.extract.service.instance;
 
 import etl.engine.extract.model.workload.Workload;
 import org.springframework.stereotype.Component;
@@ -10,6 +10,7 @@ import java.util.UUID;
 /**
  * The component is the holder of the instance status information. The information is exposed via /actuator/info and
  * is used to create the status report.
+ * @see etl.engine.extract.service.instance.InstanceStatusInfoContributor
  */
 @Component
 public class InstanceStatus {
