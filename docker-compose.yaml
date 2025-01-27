@@ -4,6 +4,9 @@ services:
     build: etl-management-service
     container_name: etl-ems
     restart: "no"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
+      - EMS_TOPICS_HEARTBEAT=ems.heartbeat
     ports:
       - "8080:8080"
     healthcheck:

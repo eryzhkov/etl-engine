@@ -4,7 +4,7 @@ spring:
   kafka:
     bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
     producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: etl.engine.extract.service.messaging.CustomJsonSerializer
 management:
   endpoints:
     web:
