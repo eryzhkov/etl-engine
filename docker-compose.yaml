@@ -1,3 +1,6 @@
+volumes:
+  etl-db-volume:
+
 services:
   etl-management-service:
     image: etl-management-service:latest
@@ -58,3 +61,22 @@ services:
       start_period: 3s
     ports:
       - "9092:9092"
+
+  etl-postgres-db:
+    image: postgres:17-alpine
+    container_name: etl-postgres-db
+    restart: "no"
+    environment:
+      - POSTGRES_USER=etl
+      - POSTGRES_PASSWORD=etl
+      - POSTGRES_DB=etl
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 3s
+      start_period: 3s
+    volumes:
+      - ./docker/etl-postgres-db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - etl-db-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
