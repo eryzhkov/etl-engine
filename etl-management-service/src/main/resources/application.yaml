@@ -34,6 +34,11 @@ logging:
     etl.engine.ems: "debug"
 
 ems:
+  monitoring:
+    initial-delay-ms: "${EMS_MONITORING_INITIAL_DELAY_MS}"
+    fixed-rate-ms: "${EMS_MONITORING_FIXED_RATE_MS}"
+    unknown-status-threshold-ms: "${EMS_MONITORING_UNKNOWN_STATUS_THRESHOLD_MS}"
+    offline-status-threshold-ms: "${EMS_MONITORING_OFFLINE_STATUS_THRESHOLD_MS}"
   database:
     schema: "${EMS_DATABASE_SCHEMA}"
   kafka:

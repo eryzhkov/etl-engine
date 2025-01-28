@@ -38,6 +38,12 @@ public class ServiceMonitoring {
     @Column(name = "reported_at")
     private LocalDateTime reportedAt;
 
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "status_updated_at")
+    private LocalDateTime statusUpdatedAt;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
