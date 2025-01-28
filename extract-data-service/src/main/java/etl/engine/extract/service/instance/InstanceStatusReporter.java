@@ -26,14 +26,14 @@ import java.util.UUID;
 @Slf4j
 public class InstanceStatusReporter {
 
-    @Value("${eds.status-report.enabled}")
+    @Value("${eds.status-reporting.enabled}")
     private boolean isReportingEnabled;
     private final InstanceStatus instanceStatus;
     private final MessagingService messagingService;
 
     @Scheduled(
-            initialDelayString = "${eds.status-report.initial-delay}",
-            fixedRateString = "${eds.status-report.fixed-rate}")
+            initialDelayString = "${eds.status-reporting.initial-delay}",
+            fixedRateString = "${eds.status-reporting.fixed-rate}")
     public void report() {
         if (isReportingEnabled) {
             InstanceStatusReport statusReport = new InstanceStatusReport(
