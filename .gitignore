@@ -25,3 +25,6 @@ replay_pid*
 
 # macOS
 .DS_Store
+
+# Amplicode
+amplicode.xml

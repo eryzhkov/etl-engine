@@ -1,19 +1,17 @@
 spring:
   application:
     name: extract-data-service
-  kafka:
-    bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
-    producer:
-      value-serializer: etl.engine.extract.service.messaging.CustomJsonSerializer
 management:
   endpoints:
     web:
       exposure:
         include: health, info
 eds:
+  kafka:
+    bootstrap-servers: "${EDS_KAFKA_BOOTSTRAP_SERVERS}"
+    topics:
+      heartbeat: "${EDS_KAFKA_TOPICS_HEARTBEAT}"
   status-reporting:
     enabled: "${EDS_STATUS_REPORTING_ENABLED:false}"
     initial-delay-ms: "${EDS_STATUS_REPORTING_INITIAL_DELAY_MS}"
     fixed-rate-ms: "${EDS_STATUS_REPORTING_FIXED_RATE_MS}"
-  topics:
-    heartbeat: "${EDS_TOPICS_HEARTBEAT}"
