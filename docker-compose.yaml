@@ -8,8 +8,8 @@ services:
     container_name: etl-ems
     restart: "no"
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
-      - EMS_TOPICS_HEARTBEAT=ems.heartbeat
+      - EMS_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
+      - EMS_KAFKA_TOPICS_HEARTBEAT=ems.heartbeat
       - SPRING_DATASOURCE_URL=jdbc:postgresql://etl-postgres-db:5432/etl
       - SPRING_DATASOURCE_USERNAME=etl
       - SPRING_DATASOURCE_PASSWORD=etl

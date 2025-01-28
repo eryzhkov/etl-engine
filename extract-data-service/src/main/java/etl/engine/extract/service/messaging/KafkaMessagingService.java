@@ -12,7 +12,7 @@ public class KafkaMessagingService implements MessagingService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${eds.topics.heartbeat}")
+    @Value("${eds.kafka.topics.heartbeat}")
     private String heartBeatTopicName;
 
     @Override

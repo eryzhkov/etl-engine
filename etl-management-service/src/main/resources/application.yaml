@@ -50,8 +50,8 @@ ems:
   database:
     schema: "${EMS_DATABASE_SCHEMA}"
   kafka:
-    bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS}"
+    bootstrap-servers: "${EMS_KAFKA_BOOTSTRAP_SERVERS}"
     topics:
-      heartbeat: "${EMS_TOPICS_HEARTBEAT}"
+      heartbeat: "${EMS_KAFKA_TOPICS_HEARTBEAT}"
     consumer:
       group: "${spring.application.name}"

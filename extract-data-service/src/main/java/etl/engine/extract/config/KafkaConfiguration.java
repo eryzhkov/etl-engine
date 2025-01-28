@@ -1,6 +1,7 @@
 package etl.engine.extract.config;
 
 import etl.engine.extract.service.messaging.CustomJsonSerializer;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
@@ -21,7 +23,7 @@ public class KafkaConfiguration {
     @Value("${eds.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${eds.topics.heartbeat}")
+    @Value("${eds.kafka.topics.heartbeat}")
     private String heartBeatTopicName;
 
     @Bean
@@ -36,6 +38,18 @@ public class KafkaConfiguration {
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfiguration());
+    }
+
+    /**
+     * The parameter spring.kafka.bootstrap-servers is not used in the application.yaml.
+     * That's the KafkaAdmin client should be created here.
+     * @return KafkaAdmin
+     */
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> configuration = new HashMap<>();
+        configuration.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        return new KafkaAdmin(configuration);
     }
 
     @Bean
