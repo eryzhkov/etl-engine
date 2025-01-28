@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="20250128-01" author="eryzhkov">
+    <addColumn tableName="service_monitoring">
+      <column name="status" type="varchar(50)" remarks="The service status calculated by EMS.">
+        <constraints notNullConstraintName="nn_status" nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="service_monitoring">
+      <column name="status_updated_at" type="timestamptz" remarks="The datetime when the calculated status was updated.">
+        <constraints notNullConstraintName="nn_status_updated_at" nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>
