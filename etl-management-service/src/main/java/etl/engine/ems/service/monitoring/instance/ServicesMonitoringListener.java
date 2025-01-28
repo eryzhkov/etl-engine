@@ -14,7 +14,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 /**
  * The component listens the topic and updates the table in the database to
@@ -56,16 +56,18 @@ public class ServicesMonitoringListener {
                     entity.setInstanceType(instanceStatusReport.getInstanceType());
                     entity.setInstanceState(instanceStatusReport.getInstanceState());
                     entity.setReportedAt(instanceStatusReport.getReportedAt());
+                    entity.setStatus("online");
+                    entity.setStatusUpdatedAt(LocalDateTime.now());
                     serviceMonitoringRepository.save(entity);
                     log.debug("The report was saved.");
                 } else {
-                    log.warn("Unknown signal at {}. Found: '{}'. Expected: '{}'. The message ignored.",
+                    log.warn("Unknown signal value at {}. Found: '{}'. Expected: '{}'. The message ignored.",
                             INFO_SIGNAL_PTR,
                             SIGNAL_TYPE,
                             signalNodeValue);
                 }
             } else {
-                log.warn("Unknown type at {}. Found: '{}'. Expected: '{}'. The message ignored.",
+                log.warn("Unknown type value at {}. Found: '{}'. Expected: '{}'. The message ignored.",
                         INFO_TYPE_PTR,
                         NOTIFICATION_TYPE,
                         typeNodeValue);
