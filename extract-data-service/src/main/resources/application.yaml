@@ -13,7 +13,7 @@ management:
 eds:
   status-reporting:
     enabled: "${EDS_STATUS_REPORTING_ENABLED:false}"
-    initial-delay: "${EDS_STATUS_REPORTING_INITIAL_DELAY}"
+    initial-delay-ms: "${EDS_STATUS_REPORTING_INITIAL_DELAY_MS}"
     fixed-rate: "${EDS_STATUS_REPORTING_FIXED_RATE}"
   topics:
     heartbeat: "${EDS_TOPICS_HEARTBEAT}"
