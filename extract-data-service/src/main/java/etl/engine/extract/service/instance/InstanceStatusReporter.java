@@ -32,7 +32,7 @@ public class InstanceStatusReporter {
     private final MessagingService messagingService;
 
     @Scheduled(
-            initialDelayString = "${eds.status-reporting.initial-delay}",
+            initialDelayString = "${eds.status-reporting.initial-delay-ms}",
             fixedRateString = "${eds.status-reporting.fixed-rate}")
     public void report() {
         if (isReportingEnabled) {
