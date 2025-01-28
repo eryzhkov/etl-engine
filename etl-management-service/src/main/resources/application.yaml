@@ -32,7 +32,15 @@ logging:
     org.hibernate.orm.jdbc.bind: "trace"
     org.springframework.transaction.support: "debug"
     etl.engine.ems: "debug"
-
+server:
+  port: 8080
+  tomcat:
+    threads:
+      min-spare: ${SERVER_TOMCAT_THREADS_MIN_SPARE:2}
+      max: ${SERVER_TOMCAT_THREADS_MAX:10}
+    max-keep-alive-requests: ${SERVER_TOMCAT_MAX_KEEP_ALIVE_REQUESTS:10}
+    keep-alive-timeout: ${SERVER_TOMCAT_KEEP_ALIVE_TIMEOUT_MS:30000}
+  shutdown: graceful
 ems:
   monitoring:
     initial-delay-ms: "${EMS_MONITORING_INITIAL_DELAY_MS}"
