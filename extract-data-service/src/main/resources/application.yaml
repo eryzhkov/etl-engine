@@ -14,6 +14,6 @@ eds:
   status-reporting:
     enabled: "${EDS_STATUS_REPORTING_ENABLED:false}"
     initial-delay-ms: "${EDS_STATUS_REPORTING_INITIAL_DELAY_MS}"
-    fixed-rate: "${EDS_STATUS_REPORTING_FIXED_RATE}"
+    fixed-rate-ms: "${EDS_STATUS_REPORTING_FIXED_RATE_MS}"
   topics:
     heartbeat: "${EDS_TOPICS_HEARTBEAT}"
