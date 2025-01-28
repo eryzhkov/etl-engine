@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * reflect the actual services state.
  */
 @Component
-@KafkaListener(groupId = "${ems.kafka.consumer.group}", topics = "${ems.topics.heartbeat}")
+@KafkaListener(groupId = "${ems.kafka.consumer.group}", topics = "${ems.kafka.topics.heartbeat}")
 @RequiredArgsConstructor
 @Slf4j
 public class ServicesMonitoringListener {
