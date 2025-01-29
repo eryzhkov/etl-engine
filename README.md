@@ -4,6 +4,7 @@ It's just a sandbox for my ideas after a lot of integration projects.
 
 ## Services
 
+- [ETL Management Service](etl-management-service/README.md)
 - [Extract Data Service](extract-data-service/README.md)
 
 ## Command shortcuts
