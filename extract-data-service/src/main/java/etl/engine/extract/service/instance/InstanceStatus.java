@@ -1,5 +1,6 @@
 package etl.engine.extract.service.instance;
 
+import etl.engine.extract.model.InstanceState;
 import etl.engine.extract.model.workload.Workload;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class InstanceStatus {
 
     public String getState() {
         // At the moment the instance can report the 'idle' state only.
-        return "idle";
+        return InstanceState.idle.toString();
     }
 
     public List<Workload> getWorkload() {
