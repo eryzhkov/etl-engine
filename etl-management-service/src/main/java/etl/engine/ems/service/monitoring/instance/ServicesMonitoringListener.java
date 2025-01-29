@@ -15,7 +15,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * The component listens the topic and updates the table in the database to
@@ -58,7 +58,7 @@ public class ServicesMonitoringListener {
                     entity.setInstanceState(instanceStatusReport.getInstanceState());
                     entity.setReportedAt(instanceStatusReport.getReportedAt());
                     entity.setStatus(ServiceStatus.online);
-                    entity.setStatusUpdatedAt(LocalDateTime.now());
+                    entity.setStatusUpdatedAt(OffsetDateTime.now());
                     serviceMonitoringRepository.save(entity);
                     log.debug("The report was saved.");
                 } else {

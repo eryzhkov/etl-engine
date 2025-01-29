@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @ControllerAdvice
 @Slf4j
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
       log.error("{}", ex.getMessage(), ex);
       final ResponseSingleDto<Object> body = new ResponseSingleDto<>(
               "error",
-              LocalDateTime.now(),
+              OffsetDateTime.now(),
               ex.getMessage(),
               null);
       return ResponseEntity

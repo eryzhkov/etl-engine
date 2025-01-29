@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public class InstanceStatusReporter {
                     instanceStatus.getType(),
                     instanceStatus.getState(),
                     instanceStatus.getWorkload(),
-                    LocalDateTime.now()
+                    OffsetDateTime.now()
             );
             Event<InstanceStatusReport> event = new Event<>(
                     new EventInfo("notification", "service-status"),
@@ -69,7 +69,7 @@ public class InstanceStatusReporter {
         private String type;
         private String state;
         private List<Workload> workload;
-        private LocalDateTime timestamp;
+        private OffsetDateTime timestamp;
     }
 
 }

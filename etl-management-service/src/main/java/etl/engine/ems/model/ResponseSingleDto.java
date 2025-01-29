@@ -3,7 +3,7 @@ package etl.engine.ems.model;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * The class is used when a single object should be returned via REST API.
@@ -15,7 +15,7 @@ public class ResponseSingleDto<T> extends ResponseDto {
 
     private final T payload;
 
-    public ResponseSingleDto(String status, LocalDateTime timestamp, String description, T payload) {
+    public ResponseSingleDto(String status, OffsetDateTime timestamp, String description, T payload) {
         super(status, timestamp, description);
         this.payload = payload;
     }

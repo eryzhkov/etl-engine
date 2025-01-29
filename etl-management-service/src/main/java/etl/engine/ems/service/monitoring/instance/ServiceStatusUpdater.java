@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class ServiceStatusUpdater {
         log.debug("monitoringFixedRateMs = {}, unknownStatusThresholdMs = {}, offlineStatusThresholdMs = {}",
                 monitoringFixedRateMs, unknownStatusThresholdMs, offlineStatusThresholdMs);
         List<ServiceMonitoring> services = serviceMonitoringRepository.findAll();
-        LocalDateTime rightNow = LocalDateTime.now();
+        OffsetDateTime rightNow = OffsetDateTime.now();
         for (ServiceMonitoring serviceMonitoring : services) {
             log.debug("Check the instance '{}'...", serviceMonitoring.getId());
             log.debug("rightNow = {}", rightNow);
