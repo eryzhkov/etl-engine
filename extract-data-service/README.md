@@ -16,3 +16,8 @@ The status is published to the special heartbeat topic (see the application.yaml
 
 The status is used by EMS to monitor available instances and to decide which one is more suitable to run the next ETL-process.
 
+The configuration parameters to manage reporting are:
+- eds.status-reporting.enabled - enables/disables the status reporting,
+- eds.status-reporting.initial-delay-ms - initial delay before status reporting starts,
+- eds.status-reporting.fixed-rate-ms - the rate of the status reporting.
+
