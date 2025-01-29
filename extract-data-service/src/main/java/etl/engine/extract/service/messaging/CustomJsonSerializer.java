@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 /**
- * The JsonSerializer out of the box doesn't work with LocalDateTime correctly.
+ * The JsonSerializer out of the box doesn't work with OffsetDateTime correctly.
  * The custom serialized should solve the issue.
  */
 public class CustomJsonSerializer extends JsonSerializer<Object> {

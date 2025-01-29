@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -24,6 +24,6 @@ public class InstanceStatusReport {
     @JsonProperty("state")
     private String instanceState;
     @JsonProperty("timestamp")
-    private LocalDateTime reportedAt;
+    private OffsetDateTime reportedAt;
 
 }

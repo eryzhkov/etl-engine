@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
@@ -27,7 +27,7 @@ public class MonitoringController {
 
         final ResponseCollectionDto<ServiceMonitoring> body = new ResponseCollectionDto<>(
                 "ok",
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 "",
                 services);
 
