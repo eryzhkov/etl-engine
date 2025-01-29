@@ -41,6 +41,11 @@ server:
     max-keep-alive-requests: ${SERVER_TOMCAT_MAX_KEEP_ALIVE_REQUESTS:10}
     keep-alive-timeout: ${SERVER_TOMCAT_KEEP_ALIVE_TIMEOUT_MS:30000}
   shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 ems:
   monitoring:
     initial-delay-ms: "${EMS_MONITORING_INITIAL_DELAY_MS}"
