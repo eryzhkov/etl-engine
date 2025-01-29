@@ -1,0 +1,18 @@
+# Extract Data Service (EDS)
+
+EDS is one of four ETL-services in the project. The main goal of one is to start an ETL-process by a command from the 
+ETL Management Service (EMS). The command has enough information to let EDS to get the ETL-specification from the EMS 
+via REST API. After that, EDS connects to an external data source, extract data and publish ones to the output topic as 
+series of JSONs.
+
+## The implemented functionality
+
+### Report instance status
+
+EDS should report a status to the EMS with the fixed rate. The status describe the instance itself (unique identifier, 
+type and state - idle or busy) and may have an information about the running/scheduled ETL-process.
+
+The status is published to the special heartbeat topic (see the application.yaml).
+
+The status is used by EMS to monitor available instances and to decide which one is more suitable to run the next ETL-process.
+
