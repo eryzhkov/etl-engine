@@ -15,7 +15,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -38,22 +38,22 @@ public class ServiceMonitoring {
     private String instanceState;
 
     @Column(name = "reported_at")
-    private LocalDateTime reportedAt;
+    private OffsetDateTime reportedAt;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ServiceStatus status;
 
     @Column(name = "status_updated_at")
-    private LocalDateTime statusUpdatedAt;
+    private OffsetDateTime statusUpdatedAt;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Override
     public final boolean equals(Object o) {

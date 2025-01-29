@@ -3,7 +3,7 @@ package etl.engine.ems.model;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -16,7 +16,7 @@ public class ResponseCollectionDto<T> extends ResponseDto {
 
     private final List<T> payload;
 
-    public ResponseCollectionDto(String status, LocalDateTime timestamp, String description, List<T> payload) {
+    public ResponseCollectionDto(String status, OffsetDateTime timestamp, String description, List<T> payload) {
         super(status, timestamp, description);
         this.payload = payload;
     }
