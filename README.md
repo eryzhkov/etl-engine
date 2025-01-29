@@ -2,6 +2,10 @@
 
 It's just a sandbox for my ideas after a lot of integration projects.
 
+## Services
+
+- [Extract Data Service](extract-data-service/README.md)
+
 ## Command shortcuts
 
 ### How to build and run
@@ -10,7 +14,7 @@ It's just a sandbox for my ideas after a lot of integration projects.
 $ mvn clean package && docker compose up --build
 ```
 
-### How to consume messages
+### How to consume messages from a topic manually
 
 ```shell
 $ docker exec --workdir /opt/kafka/bin -it etl-kafka sh
