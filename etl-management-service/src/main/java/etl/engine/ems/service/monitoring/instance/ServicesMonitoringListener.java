@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.ems.dao.entity.ServiceMonitoring;
+import etl.engine.ems.dao.entity.ServiceStatus;
 import etl.engine.ems.dao.repository.ServiceMonitoringRepository;
 import etl.engine.ems.model.InstanceStatusReport;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class ServicesMonitoringListener {
                     entity.setInstanceType(instanceStatusReport.getInstanceType());
                     entity.setInstanceState(instanceStatusReport.getInstanceState());
                     entity.setReportedAt(instanceStatusReport.getReportedAt());
-                    entity.setStatus("online");
+                    entity.setStatus(ServiceStatus.online);
                     entity.setStatusUpdatedAt(LocalDateTime.now());
                     serviceMonitoringRepository.save(entity);
                     log.debug("The report was saved.");

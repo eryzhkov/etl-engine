@@ -3,6 +3,8 @@ package etl.engine.ems.dao.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -39,7 +41,8 @@ public class ServiceMonitoring {
     private LocalDateTime reportedAt;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ServiceStatus status;
 
     @Column(name = "status_updated_at")
     private LocalDateTime statusUpdatedAt;

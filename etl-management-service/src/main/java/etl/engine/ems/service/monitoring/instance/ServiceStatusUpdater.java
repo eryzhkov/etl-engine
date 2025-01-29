@@ -1,6 +1,7 @@
 package etl.engine.ems.service.monitoring.instance;
 
 import etl.engine.ems.dao.entity.ServiceMonitoring;
+import etl.engine.ems.dao.entity.ServiceStatus;
 import etl.engine.ems.dao.repository.ServiceMonitoringRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ServiceStatusUpdater {
-
-    private static final String UNKNOWN_STATUS = "unknown";
-    private static final String OFFLINE_STATUS = "offline";
 
     @Value("${ems.monitoring.fixed-rate-ms}")
     private long monitoringFixedRateMs;
@@ -55,16 +53,16 @@ public class ServiceStatusUpdater {
             long timeDeltaMs = Duration.between(serviceMonitoring.getReportedAt(), rightNow).toMillis();
             log.debug("timeDeltaMs = {}", timeDeltaMs);
             if (timeDeltaMs > monitoringFixedRateMs && timeDeltaMs <= unknownStatusThresholdMs) {
-                serviceMonitoring.setStatus(UNKNOWN_STATUS);
+                serviceMonitoring.setStatus(ServiceStatus.unknown);
                 serviceMonitoringRepository.save(serviceMonitoring);
                 log.debug("For the instance '{}' the status was changed from 'online' to '{}'.",
-                        serviceMonitoring.getId(), UNKNOWN_STATUS);
+                        serviceMonitoring.getId(), ServiceStatus.unknown);
             }
             if (timeDeltaMs > unknownStatusThresholdMs && timeDeltaMs <= offlineStatusThresholdMs) {
-                serviceMonitoring.setStatus(OFFLINE_STATUS);
+                serviceMonitoring.setStatus(ServiceStatus.offline);
                 serviceMonitoringRepository.save(serviceMonitoring);
                 log.debug("For the instance '{}' the status was changed from '{}' to '{}'.",
-                        serviceMonitoring.getId(), UNKNOWN_STATUS, OFFLINE_STATUS);
+                        serviceMonitoring.getId(), ServiceStatus.unknown, ServiceStatus.offline);
             }
             if (timeDeltaMs > offlineStatusThresholdMs) {
                 serviceMonitoringRepository.delete(serviceMonitoring);
