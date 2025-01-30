@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="20250130-03" author="eryzhkov">
+    <createTable tableName="etl_processes" remarks="ETL-processes">
+      <column name="id" type="java.util.UUID" remarks="The unique identifier">
+        <constraints primaryKey="true" primaryKeyName="pk_etl_processes"/>
+      </column>
+      <column name="name" type="varchar(100)" remarks="The name of the ETL-process.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_processes_name"/>
+      </column>
+      <column name="code" type="varchar(100)" remarks="The code of the ETL-process.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_processes_code"/>
+      </column>
+      <column name="description" type="varchar(200)" remarks="The free text description of the ETL-process."/>
+      <column name="ref_external_system_id" type="java.util.UUID" remarks="The reference to the external system">
+        <constraints foreignKeyName="fk_etl_processes_ref_external_system_id" nullable="false" referencedTableName="external_systems" referencedColumnNames="id"/>
+      </column>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_external_systems_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_external_systems_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
