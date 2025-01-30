@@ -2,8 +2,6 @@ package etl.engine.ems.dao.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -12,40 +10,33 @@ import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "service_monitoring")
+@Table(name = "external_systems")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ServiceMonitoring extends AuditableEntity implements Serializable {
+public class ExternalSystem extends AuditableEntity implements Serializable {
 
     @Id
-    @Column(name = "instance_id")
     private UUID id;
 
-    @Column(name = "instance_type")
-    private String instanceType;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "instance_state")
-    private String instanceState;
+    @Column(name = "code")
+    private String code;
 
-    @Column(name = "reported_at")
-    private OffsetDateTime reportedAt;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ServiceStatus status;
-
-    @Column(name = "status_updated_at")
-    private OffsetDateTime statusUpdatedAt;
-
-    public ServiceMonitoring() {
+    public ExternalSystem() {
         super();
+        this.id = UUID.randomUUID();
     }
+
 
     @Override
     public final boolean equals(Object o) {
@@ -64,7 +55,7 @@ public class ServiceMonitoring extends AuditableEntity implements Serializable {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        ServiceMonitoring that = (ServiceMonitoring) o;
+        ExternalSystem that = (ExternalSystem) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

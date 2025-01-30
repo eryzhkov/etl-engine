@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="20250130-01" author="eryzhkov">
+    <createTable tableName="external_systems" remarks="External systems.">
+      <column name="id" type="java.util.UUID" remarks="The unique identifier.">
+        <constraints primaryKey="true" primaryKeyName="pk_external_systems" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(100)" remarks="The name of the external system.">
+        <constraints nullable="false" notNullConstraintName="nn_external_systems_name"/>
+      </column>
+      <column name="code" type="varchar(100)" remarks="The code of the external system.">
+        <constraints nullable="false" notNullConstraintName="nn_external_systems_code"/>
+      </column>
+      <column name="description" type="varchar(200)" remarks="The free text description of the external system."/>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_external_systems_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_external_systems_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
