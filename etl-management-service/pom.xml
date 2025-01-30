@@ -6,12 +6,12 @@
   <parent>
     <groupId>etl.engine</groupId>
     <artifactId>etl-engine</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
 
   <groupId>etl.engine.ems</groupId>
   <artifactId>etl-management-service</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>etl-management-service</name>
 
   <description>ETL Management Service</description>
