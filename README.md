@@ -2,6 +2,8 @@
 
 It's just a sandbox for my ideas after a lot of integration projects.
 
+The main goal for the repo is not to provide a production-ready code but to proof the idea. 
+
 ## Services
 
 - [ETL Management Service](etl-management-service/README.md)
