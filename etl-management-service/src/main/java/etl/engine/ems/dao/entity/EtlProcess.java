@@ -38,6 +38,11 @@ public class EtlProcess extends AuditableEntity implements Serializable {
     @JoinColumn(name = "ref_external_system_id")
     private ExternalSystem externalSystem;
 
+    public EtlProcess() {
+        super();
+        this.id = UUID.randomUUID();
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) {

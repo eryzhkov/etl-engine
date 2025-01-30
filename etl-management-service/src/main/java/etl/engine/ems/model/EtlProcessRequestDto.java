@@ -4,16 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @ToString
-public class ExternalSystemRequestDto {
+public class EtlProcessRequestDto {
 
-    private UUID id;
     private String name;
     private String code;
     private String description;
+    private ExternalSystemRequestDto externalSystem;
 
 }

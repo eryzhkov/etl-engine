@@ -6,6 +6,7 @@ import etl.engine.ems.exception.EntityNotFoundException;
 import etl.engine.ems.model.ExternalSystemRequestDto;
 import etl.engine.ems.model.ResponseCollectionDto;
 import etl.engine.ems.model.ResponseSingleDto;
+import etl.engine.ems.model.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
@@ -38,7 +39,7 @@ public class ExternalSystemController {
         log.debug("Request to get all external systems");
         List<ExternalSystem> externalSystems = externalSystemRepository.findAll();
         final ResponseCollectionDto<ExternalSystem> body = new ResponseCollectionDto<>(
-                "ok",
+                ResponseStatus.ok,
                 "Get all external systems",
                 externalSystems);
         return ResponseEntity
@@ -59,7 +60,7 @@ public class ExternalSystemController {
         ExternalSystem saved = externalSystemRepository.save(externalSystem);
         log.debug("Saved entity: {}", saved);
         final ResponseSingleDto<ExternalSystem> body = new ResponseSingleDto<>(
-                "ok",
+                ResponseStatus.ok,
                 "Create new external system",
                 saved);
 
@@ -100,7 +101,7 @@ public class ExternalSystemController {
             log.debug("The found entity was updated.");
 
             final ResponseSingleDto<ExternalSystem> body = new ResponseSingleDto<>(
-                    "ok",
+                    ResponseStatus.ok,
                     "Update the external system",
                     updatedEntity);
             return ResponseEntity
@@ -111,7 +112,7 @@ public class ExternalSystemController {
         } else {
             log.debug("No updates were found.");
             final ResponseSingleDto<ExternalSystem> body = new ResponseSingleDto<>(
-                    "error",
+                    ResponseStatus.warning,
                     "The external system was not updated due to the empty or incorrect request body",
                     foundEntity);
             return ResponseEntity
@@ -132,7 +133,7 @@ public class ExternalSystemController {
         externalSystemRepository.deleteById(id);
         log.debug("The entity was deleted.");
         final ResponseSingleDto<ExternalSystem> body = new ResponseSingleDto<>(
-                "ok",
+                ResponseStatus.ok,
                 "Delete the external system",
                 foundEntity);
         return ResponseEntity
