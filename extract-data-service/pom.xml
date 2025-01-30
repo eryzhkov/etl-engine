@@ -6,12 +6,12 @@
   <parent>
     <groupId>etl.engine</groupId>
     <artifactId>etl-engine</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
 
   <groupId>etl.engine.extract</groupId>
   <artifactId>extract-data-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>extract-data-service</name>
 
   <description>Extract Data Service</description>
