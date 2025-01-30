@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <property name="now" value="now()" dbms="postgresql"/>
+
+  <changeSet id="20250130-02" author="eryzhkov">
+    <createTable tableName="etl_phases" remarks="ETL phases (extract, transform. load).">
+      <column name="id" type="integer" remarks="The unique identifier.">
+        <constraints primaryKey="true" primaryKeyName="pk_etl_phases" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(100)" remarks="The name of the ETL phase.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_phases_name"/>
+      </column>
+      <column name="code" type="varchar(50)" remarks="The code of the ETL phase.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_phases_code"/>
+      </column>
+      <column name="description" type="varchar(200)" remarks="The free text description of the ETL phase."/>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_etl_phases_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_etl_phases_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+
+    <insert tableName="etl_phases">
+      <column name="id" value="1"/>
+      <column name="name" value="The extract data phase"/>
+      <column name="code" value="data-extract"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+
+    <insert tableName="etl_phases">
+      <column name="id" value="2"/>
+      <column name="name" value="The structure transformation phase"/>
+      <column name="code" value="structure-transform"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+
+    <insert tableName="etl_phases">
+      <column name="id" value="3"/>
+      <column name="name" value="The data transformation phase"/>
+      <column name="code" value="data-transform"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+
+    <insert tableName="etl_phases">
+      <column name="id" value="4"/>
+      <column name="name" value="The data load phase"/>
+      <column name="code" value="data-load"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>
