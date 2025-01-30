@@ -9,7 +9,7 @@ public abstract class ResponseDto {
 
     private final ResponseInfo info;
 
-    public ResponseDto(String status, String description) {
+    public ResponseDto(ResponseStatus status, String description) {
         this.info = new ResponseInfo(status, description);
     }
 

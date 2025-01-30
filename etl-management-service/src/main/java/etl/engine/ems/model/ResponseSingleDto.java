@@ -13,7 +13,7 @@ public class ResponseSingleDto<T> extends ResponseDto {
 
     private final T payload;
 
-    public ResponseSingleDto(String status, String description, T payload) {
+    public ResponseSingleDto(ResponseStatus status, String description, T payload) {
         super(status, description);
         this.payload = payload;
     }
