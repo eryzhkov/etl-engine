@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="20250130-04" author="eryzhkov">
+    <createTable tableName="etl_configurations" remarks="ETL-process configurations">
+      <column name="id" type="java.util.UUID" remarks="The unique identifier">
+        <constraints primaryKeyName="pk_etl_configurations" primaryKey="true" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(100)" remarks="ETL-configuration name">
+        <constraints nullable="false" notNullConstraintName="nn_etl_configurations_name"/>
+      </column>
+      <column name="mime_type" type="varchar(100)" remarks="ETL-configuration mime type">
+        <constraints nullable="false" notNullConstraintName="nn_etl_configurations_mime_type"/>
+      </column>
+      <column name="spec" type="text" remarks="ETL-configuration file">
+        <constraints notNullConstraintName="nn_etl_configurations_spec" nullable="false"/>
+      </column>
+      <column name="ref_etl_process_id" type="java.util.UUID" remarks="The reference to the ETL-process">
+        <constraints foreignKeyName="fk_etl_configurations_ref_etl_process_id" nullable="false" referencedTableName="etl_processes" referencedColumnNames="id"/>
+      </column>
+      <column name="ref_etl_phase_id" type="integer" remarks="The reference to the ETL-phase">
+        <constraints foreignKeyName="fk_etl_configurations_ref_etl_phase_id" nullable="false" referencedTableName="etl_phases" referencedColumnNames="id"/>
+      </column>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_etl_configurations_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_etl_configurations_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
