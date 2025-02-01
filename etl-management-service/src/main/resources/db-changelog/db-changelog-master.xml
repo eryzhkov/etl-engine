@@ -11,5 +11,6 @@
   <include relativeToChangelogFile="true" file="changes/20250130-02-create-table_etl_phases.xml"/>
   <include relativeToChangelogFile="true" file="changes/20250130-03-create-table_etl_processes.xml"/>
   <include relativeToChangelogFile="true" file="changes/20250130-04-create-table_etl_configurations.xml"/>
+  <include relativeToChangelogFile="true" file="changes/20250131-01-create-table_etl_executions.xml"/>
 
 </databaseChangeLog>
