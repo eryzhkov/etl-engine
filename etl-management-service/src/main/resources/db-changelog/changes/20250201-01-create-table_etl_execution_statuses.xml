@@ -1,0 +1,60 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <property name="now" value="now()" dbms="postgresql"/>
+
+  <changeSet id="20250201-01" author="eryzhkov">
+
+    <createTable tableName="etl_execution_statuses" remarks="ETL-process executions statuses.">
+      <column name="id" type="integer" remarks="The unique identifier">
+        <constraints primaryKey="true" primaryKeyName="pk_etl_execution_statuses" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(100)" remarks="The name of the status.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_execution_statuses_name"/>
+      </column>
+      <column name="description" type="varchar(200)" remarks="The free text description of the status."/>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_etl_execution_statuses_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_etl_execution_statuses_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="1"/>
+      <column name="name" value="SCHEDULED"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="2"/>
+      <column name="name" value="ACCEPTED"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="3"/>
+      <column name="name" value="RUNNING"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="4"/>
+      <column name="name" value="FINISHED"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="5"/>
+      <column name="name" value="FAILED"/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

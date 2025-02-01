@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="20250201-02" author="eryzhkov">
+    <createTable tableName="etl_executions" remarks="ETL-processes executions.">
+      <column name="id" type="java.util.UUID" remarks="The unique identifier.">
+        <constraints primaryKey="true" primaryKeyName="pk_etl_executions" nullable="false"/>
+      </column>
+      <column name="ref_etl_process_id" type="java.util.UUID" remarks="The reference to the ETL-process.">
+        <constraints nullable="false" foreignKeyName="fk_etl_executions_ref_etl_process_id" referencedTableName="etl_processes" referencedColumnNames="id"/>
+      </column>
+      <column name="scheduled_at" type="timestamptz" remarks="The date-time when the execution command was sent to the ETL-service."/>
+      <column name="accepted_at" type="timestamptz" remarks="The date-time when the ETL-process execution was accepted by the ETL-service."/>
+      <column name="started_at" type="timestamptz" remarks="The date-time when the ETL-process was started by ETL-service."/>
+      <column name="finished_at" type="timestamptz" remarks="The date-time when the ETL-process was finished by the ETL-service."/>
+      <column name="ref_etl_execution_status_id" type="integer" remarks="The reference to the execution status.">
+        <constraints foreignKeyName="fk_etl_executions_ref_etl_execution_status_id" referencedTableName="etl_execution_statuses" referencedColumnNames="id"/>
+      </column>
+      <column name="comment" type="text" remarks="The free text comment about the execution."/>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_etl_executions_service_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_etl_executions_service_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
