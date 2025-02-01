@@ -3,6 +3,8 @@ package etl.engine.ems.dao.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,33 +12,50 @@ import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "external_systems")
+@Table(name = "etl_stream_executions")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ExternalSystem extends AuditableEntity implements Serializable {
+public class EtlStreamExecution extends AuditableEntity implements Serializable {
 
     @Id
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "service_instance_id", nullable = false)
+    private UUID serviceInstanceId;
 
-    @Column(name = "code", nullable = false)
-    private String code;
+    @Column(name = "stream_name", nullable = false)
+    private String streamName;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "stream_started_at", nullable = false)
+    private OffsetDateTime streamStartedAt;
 
-    public ExternalSystem() {
+    @Column(name = "stream_finished_at")
+    private OffsetDateTime streamFinishedAt;
+
+    @Column(name = "total_processed_messages")
+    private Long totalProcessedMessages = -1L;
+
+    @Column(name = "total_failed_messages")
+    private Long totalFailedMessages = -1L;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ref_etl_execution_id")
+    private EtlExecution etlExecution;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ref_etl_phase_id")
+    private EtlPhase etlPhase;
+
+    private EtlStreamExecution() {
         super();
         this.id = UUID.randomUUID();
     }
-
 
     @Override
     public final boolean equals(Object o) {
@@ -55,7 +74,7 @@ public class ExternalSystem extends AuditableEntity implements Serializable {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        ExternalSystem that = (ExternalSystem) o;
+        EtlStreamExecution that = (EtlStreamExecution) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

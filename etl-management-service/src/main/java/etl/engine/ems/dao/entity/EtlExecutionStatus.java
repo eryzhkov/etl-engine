@@ -7,36 +7,28 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
-@Table(name = "external_systems")
+@Immutable
+@Table(name = "etl_execution_statuses")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ExternalSystem extends AuditableEntity implements Serializable {
+public class EtlExecutionStatus extends AuditableEntity implements Serializable {
 
     @Id
-    private UUID id;
+    private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
-
-    @Column(name = "code", nullable = false)
-    private String code;
 
     @Column(name = "description")
     private String description;
-
-    public ExternalSystem() {
-        super();
-        this.id = UUID.randomUUID();
-    }
-
 
     @Override
     public final boolean equals(Object o) {
@@ -55,7 +47,7 @@ public class ExternalSystem extends AuditableEntity implements Serializable {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        ExternalSystem that = (ExternalSystem) o;
+        EtlExecutionStatus that = (EtlExecutionStatus) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 
