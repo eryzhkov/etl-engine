@@ -58,5 +58,7 @@ ems:
     bootstrap-servers: "${EMS_KAFKA_BOOTSTRAP_SERVERS}"
     topics:
       heartbeat: "${EMS_KAFKA_TOPICS_HEARTBEAT}"
+      control: "${EMS_KAFKA_TOPICS_CONTROL}"
+      progress: "${EMS_KAFKA_TOPICS_PROGRESS}"
     consumer:
       group: "${spring.application.name}"
