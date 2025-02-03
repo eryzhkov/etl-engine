@@ -24,7 +24,7 @@ public class InstanceStatus {
 
     public String getType() {
         // The default instance type.
-        return "extract";
+        return "DATA_EXTRACTOR";
     }
 
     public String getState() {

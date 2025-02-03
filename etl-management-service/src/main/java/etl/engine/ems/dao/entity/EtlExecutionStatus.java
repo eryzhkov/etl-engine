@@ -21,6 +21,13 @@ import java.util.Objects;
 @ToString(callSuper = true)
 public class EtlExecutionStatus extends AuditableEntity implements Serializable {
 
+    public final static String CREATED = "CREATED";
+    public final static String SCHEDULED = "SCHEDULED";
+    public final static String ACCEPTED = "ACCEPTED";
+    public final static String RUNNING = "RUNNING";
+    public final static String FINISHED = "FINISHED";
+    public final static String FAILED = "FAILED";
+
     @Id
     private Integer id;
 
