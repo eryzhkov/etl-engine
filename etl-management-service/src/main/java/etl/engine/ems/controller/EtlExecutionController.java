@@ -1,21 +1,13 @@
 package etl.engine.ems.controller;
 
-import etl.engine.ems.dao.entity.EtlExecution;
-import etl.engine.ems.dao.entity.EtlExecutionStatus;
-import etl.engine.ems.dao.entity.EtlProcess;
-import etl.engine.ems.dao.entity.ServiceMonitoring;
-import etl.engine.ems.dao.entity.ServiceStatus;
 import etl.engine.ems.dao.repository.EtlExecutionRepository;
-import etl.engine.ems.dao.repository.EtlExecutionStatusRepository;
-import etl.engine.ems.dao.repository.EtlProcessRepository;
-import etl.engine.ems.dao.repository.ServiceMonitoringRepository;
 import etl.engine.ems.exception.EntityNotFoundException;
 import etl.engine.ems.mapper.EtlExecutionMapper;
 import etl.engine.ems.model.EtlExecutionDto;
-import etl.engine.ems.model.EtlServiceType;
 import etl.engine.ems.model.ResponseCollectionDto;
 import etl.engine.ems.model.ResponseSingleDto;
 import etl.engine.ems.model.ResponseStatus;
+import etl.engine.ems.service.EtlExecutionPlanner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
@@ -29,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -39,9 +32,7 @@ public class EtlExecutionController {
 
     private final EtlExecutionRepository etlExecutionRepository;
     private final EtlExecutionMapper etlExecutionMapper;
-    private final EtlExecutionStatusRepository etlExecutionStatusRepository;
-    private final EtlProcessRepository etlProcessRepository;
-    private final ServiceMonitoringRepository serviceMonitoringRepository;
+    private final EtlExecutionPlanner etlExecutionPlanner;
 
     @GetMapping
     public ResponseEntity<ResponseCollectionDto<EtlExecutionDto>> getAllEtlExecutions() {
@@ -64,47 +55,37 @@ public class EtlExecutionController {
 
     @PostMapping
     public ResponseEntity<ResponseSingleDto<EtlExecutionDto>> createEtlExecution(
-            @RequestBody EtlExecutionDto etlExecutionDto) throws EntityNotFoundException {
-        log.debug("request: {}", etlExecutionDto);
-        // Try to find an ETL-service instance of the 'data-extract' type to run the ETL-process.
-        ServiceMonitoring etlServiceInstance = serviceMonitoringRepository
-                .findServiceMonitoringByStatusAndInstanceStateAndInstanceType(
-                        ServiceStatus.online,
-                        "idle",
-                        EtlServiceType.DATA_EXTRACTOR.toString())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("There are no suitable ETL-service instance of the 'data-extractor' type in the 'idle' state to create an ETL execution!")
-                );
+            @RequestBody Map<String, UUID> requestBody) throws EntityNotFoundException {
+        log.debug("requestBody: {}", requestBody);
 
-        // Create a new ETL execution entity with the 'CREATED' status.
-        UUID etlProcessId = etlExecutionDto.getEtlProcess().getId();
-        EtlProcess targetEtlProcess = etlProcessRepository
-                .findById(etlProcessId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("The required ETL process with id=" + etlProcessId + " was not found in the repository!")
-                );
-        EtlExecutionStatus createdStatus = etlExecutionStatusRepository
-                .findEtlExecutionStatusByName(EtlExecutionStatus.CREATED)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'CREATED' was not found in the repository!"));
-        EtlExecution etlExecutionEntity = etlExecutionMapper.toEntity(etlExecutionDto);
-        etlExecutionEntity.setStatus(createdStatus);
-        etlExecutionEntity.setEtlProcess(targetEtlProcess);
-        log.debug("New EtlExecution entity: {}", etlExecutionEntity);
-        // Save the ETL-execution
-        EtlExecution createdEtlExecution = etlExecutionRepository.save(etlExecutionEntity);
-        log.debug("Saved EtlExecution entity: {}", createdEtlExecution);
-        // Notify the found ETL-service instance about the new ETL-execution
-        //TODO Send the command via topic!
-        final ResponseSingleDto<EtlExecutionDto> body = new ResponseSingleDto<>(
-                ResponseStatus.ok,
-                "Create new ETL-execution",
-                etlExecutionMapper.toEtlExecutionDto(createdEtlExecution)
-        );
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .cacheControl(CacheControl.noCache())
-                .body(body);
+        if (requestBody.containsKey("etlProcessId")) {
+            UUID etlProcessId = requestBody.get("etlProcessId");
+            log.debug("Found etlProcessId = '{}'", etlProcessId);
+            EtlExecutionDto etlExecutionDto = etlExecutionPlanner.createEtlProcessExecution(etlProcessId);
+            final ResponseSingleDto<EtlExecutionDto> body = new ResponseSingleDto<>(
+                    ResponseStatus.ok,
+                    "Create new ETL-execution",
+                    etlExecutionDto
+            );
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .cacheControl(CacheControl.noCache())
+                    .body(body);
+        } else {
+            log.debug("No etlProcessId was found in the request body");
+            final ResponseSingleDto<EtlExecutionDto> body = new ResponseSingleDto<>(
+                    ResponseStatus.warning,
+                    "The ETL-execution was not created due to the missed ETL-process identifier in the request body",
+                    null);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .cacheControl(CacheControl.noCache())
+                    .body(body);
+        }
+
+
     }
 
 }
