@@ -2,6 +2,8 @@ package etl.engine.ems.dao.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class EtlConfiguration extends AuditableEntity implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "name", nullable = false)
@@ -44,7 +47,6 @@ public class EtlConfiguration extends AuditableEntity implements Serializable {
 
     public EtlConfiguration() {
         super();
-        this.id = UUID.randomUUID();
     }
 
     @Override
