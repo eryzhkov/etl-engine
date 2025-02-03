@@ -3,40 +3,58 @@ package etl.engine.ems.dao.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "external_systems")
+@Immutable
+@Table(name = "etl_executions")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ExternalSystem extends AuditableEntity implements Serializable {
+public class EtlExecution extends AuditableEntity implements Serializable {
 
     @Id
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "scheduled_at")
+    private OffsetDateTime scheduledAt;
 
-    @Column(name = "code", nullable = false)
-    private String code;
+    @Column(name = "accepted_at")
+    private OffsetDateTime acceptedAt;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "started_at")
+    private OffsetDateTime startedAt;
 
-    public ExternalSystem() {
+    @Column(name = "finished_at")
+    private OffsetDateTime finishedAt;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ref_etl_process_id")
+    private EtlProcess etlProcess;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ref_etl_execution_status_id")
+    private EtlExecutionStatus status;
+
+    public EtlExecution() {
         super();
         this.id = UUID.randomUUID();
     }
-
 
     @Override
     public final boolean equals(Object o) {
@@ -55,7 +73,7 @@ public class ExternalSystem extends AuditableEntity implements Serializable {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        ExternalSystem that = (ExternalSystem) o;
+        EtlExecution that = (EtlExecution) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

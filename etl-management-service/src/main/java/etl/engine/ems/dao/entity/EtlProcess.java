@@ -25,10 +25,10 @@ public class EtlProcess extends AuditableEntity implements Serializable {
     @Id
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "description")

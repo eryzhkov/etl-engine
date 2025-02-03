@@ -27,13 +27,13 @@ public class ServiceMonitoring extends AuditableEntity implements Serializable {
     @Column(name = "instance_id")
     private UUID id;
 
-    @Column(name = "instance_type")
+    @Column(name = "instance_type", nullable = false)
     private String instanceType;
 
-    @Column(name = "instance_state")
+    @Column(name = "instance_state", nullable = false)
     private String instanceState;
 
-    @Column(name = "reported_at")
+    @Column(name = "reported_at", nullable = false)
     private OffsetDateTime reportedAt;
 
     @Column(name = "status")

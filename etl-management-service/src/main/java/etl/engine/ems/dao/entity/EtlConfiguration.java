@@ -25,13 +25,13 @@ public class EtlConfiguration extends AuditableEntity implements Serializable {
     @Id
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "mime_type")
+    @Column(name = "mime_type", nullable = false)
     private String mimeType;
 
-    @Column(name = "spec")
+    @Column(name = "spec", nullable = false)
     private String specification;
 
     @ManyToOne(optional = false)
