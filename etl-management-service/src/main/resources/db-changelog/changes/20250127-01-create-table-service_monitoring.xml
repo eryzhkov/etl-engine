@@ -6,24 +6,24 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
   <changeSet id="20250127-01" author="eryzhkov">
-    <createTable tableName="service_monitoring" remarks="The actual state of ETL services.">
+    <createTable tableName="etl_instances" remarks="The actual state of ETL-service instances.">
       <column name="instance_id" type="java.util.UUID" remarks="The ETL-service instance unique identifier.">
-        <constraints primaryKey="true" primaryKeyName="pk_service_monitoring" nullable="false"/>
+        <constraints primaryKey="true" primaryKeyName="pk_etl_instances" nullable="false"/>
       </column>
       <column name="instance_type" type="varchar(50)" remarks="The reported instance type.">
-        <constraints notNullConstraintName="nn_instance_type" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_instances_instance_type" nullable="false"/>
       </column>
       <column name="instance_state" type="varchar(50)" remarks="The reported instance state.">
-        <constraints notNullConstraintName="nn_reported_state" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_instances_reported_state" nullable="false"/>
       </column>
       <column name="reported_at" type="timestamptz" remarks="The datetime when the report was received.">
-        <constraints notNullConstraintName="nn_reported_at" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_instances_reported_at" nullable="false"/>
       </column>
       <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
-        <constraints notNullConstraintName="nn_created_at" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_instances_created_at" nullable="false"/>
       </column>
       <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
-        <constraints notNullConstraintName="nn_updated_at" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_instances_updated_at" nullable="false"/>
       </column>
     </createTable>
   </changeSet>

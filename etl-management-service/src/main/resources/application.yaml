@@ -30,7 +30,8 @@ logging:
   level:
     root: "info"
     org.hibernate.orm.jdbc.bind: "trace"
-    org.springframework.transaction.support: "debug"
+    org.springframework.transaction: "debug"
+    org.springframework.kafka.transaction: "debug"
     etl.engine.ems: "debug"
 server:
   port: 8080

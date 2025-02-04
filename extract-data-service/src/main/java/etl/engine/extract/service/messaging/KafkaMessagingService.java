@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class KafkaMessagingService implements MessagingService {
     private String heartBeatTopicName;
 
     @Override
+    @Transactional
     public <T> void sendInstanceStatusReport(Event<T> instanceStatusReport) {
         kafkaTemplate.send(heartBeatTopicName, instanceStatusReport);
     }
