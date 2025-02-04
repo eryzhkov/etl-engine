@@ -1,8 +1,8 @@
 package etl.engine.ems.service.monitoring.instance;
 
-import etl.engine.ems.dao.entity.ServiceMonitoring;
+import etl.engine.ems.dao.entity.EtlInstance;
 import etl.engine.ems.dao.entity.ServiceStatus;
-import etl.engine.ems.dao.repository.ServiceMonitoringRepository;
+import etl.engine.ems.dao.repository.EtlInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ServiceStatusUpdater {
+public class EtlInstanceStatusUpdater {
 
     @Value("${ems.monitoring.fixed-rate-ms}")
     private long monitoringFixedRateMs;
@@ -34,39 +34,39 @@ public class ServiceStatusUpdater {
     @Value("${ems.monitoring.offline-status-threshold-ms}")
     private long offlineStatusThresholdMs;
 
-    private final ServiceMonitoringRepository serviceMonitoringRepository;
+    private final EtlInstanceRepository etlInstanceRepository;
 
     @Scheduled(
             initialDelayString = "${ems.monitoring.initial-delay-ms}",
             fixedRateString = "${ems.monitoring.fixed-rate-ms}"
     )
-    @Transactional
+    @Transactional("transactionManager")
     public void checkStatus() {
         log.debug("monitoringFixedRateMs = {}, unknownStatusThresholdMs = {}, offlineStatusThresholdMs = {}",
                 monitoringFixedRateMs, unknownStatusThresholdMs, offlineStatusThresholdMs);
-        List<ServiceMonitoring> services = serviceMonitoringRepository.findAll();
+        List<EtlInstance> services = etlInstanceRepository.findAll();
         OffsetDateTime rightNow = OffsetDateTime.now();
-        for (ServiceMonitoring serviceMonitoring : services) {
-            log.debug("Check the instance '{}'...", serviceMonitoring.getId());
+        for (EtlInstance etlInstance : services) {
+            log.debug("Check the instance '{}'...", etlInstance.getId());
             log.debug("rightNow = {}", rightNow);
-            log.debug("reportedAt = {}", serviceMonitoring.getReportedAt());
-            long timeDeltaMs = Duration.between(serviceMonitoring.getReportedAt(), rightNow).toMillis();
+            log.debug("reportedAt = {}", etlInstance.getReportedAt());
+            long timeDeltaMs = Duration.between(etlInstance.getReportedAt(), rightNow).toMillis();
             log.debug("timeDeltaMs = {}", timeDeltaMs);
             if (timeDeltaMs > monitoringFixedRateMs && timeDeltaMs <= unknownStatusThresholdMs) {
-                serviceMonitoring.setStatus(ServiceStatus.unknown);
-                serviceMonitoringRepository.save(serviceMonitoring);
+                etlInstance.setStatus(ServiceStatus.unknown);
+                etlInstanceRepository.save(etlInstance);
                 log.debug("For the instance '{}' the status was changed from 'online' to '{}'.",
-                        serviceMonitoring.getId(), ServiceStatus.unknown);
+                        etlInstance.getId(), ServiceStatus.unknown);
             }
             if (timeDeltaMs > unknownStatusThresholdMs && timeDeltaMs <= offlineStatusThresholdMs) {
-                serviceMonitoring.setStatus(ServiceStatus.offline);
-                serviceMonitoringRepository.save(serviceMonitoring);
+                etlInstance.setStatus(ServiceStatus.offline);
+                etlInstanceRepository.save(etlInstance);
                 log.debug("For the instance '{}' the status was changed from '{}' to '{}'.",
-                        serviceMonitoring.getId(), ServiceStatus.unknown, ServiceStatus.offline);
+                        etlInstance.getId(), ServiceStatus.unknown, ServiceStatus.offline);
             }
             if (timeDeltaMs > offlineStatusThresholdMs) {
-                serviceMonitoringRepository.delete(serviceMonitoring);
-                log.debug("The instance '{}' was removed from monitoring.", serviceMonitoring.getId());
+                etlInstanceRepository.delete(etlInstance);
+                log.debug("The instance '{}' was removed from monitoring.", etlInstance.getId());
             }
         }
         log.debug("Service statuses were checked.");

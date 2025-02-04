@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
   <include relativeToChangelogFile="true" file="changes/20250127-01-create-table-service_monitoring.xml"/>
-  <include relativeToChangelogFile="true" file="changes/20250128-01-alter-table_service-monitoring.xml"/>
+  <include relativeToChangelogFile="true" file="changes/20250128-01-alter-table_etl_instances.xml"/>
   <include relativeToChangelogFile="true" file="changes/20250130-01-create-table_external-systems.xml"/>
   <include relativeToChangelogFile="true" file="changes/20250130-02-create-table_etl_phases.xml"/>
   <include relativeToChangelogFile="true" file="changes/20250130-03-create-table_etl_processes.xml"/>

@@ -17,11 +17,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "service_monitoring")
+@Table(name = "etl_instances")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ServiceMonitoring extends AuditableEntity implements Serializable {
+public class EtlInstance extends AuditableEntity implements Serializable {
 
     @Id
     @Column(name = "instance_id")
@@ -43,7 +43,7 @@ public class ServiceMonitoring extends AuditableEntity implements Serializable {
     @Column(name = "status_updated_at")
     private OffsetDateTime statusUpdatedAt;
 
-    public ServiceMonitoring() {
+    public EtlInstance() {
         super();
     }
 
@@ -64,7 +64,7 @@ public class ServiceMonitoring extends AuditableEntity implements Serializable {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        ServiceMonitoring that = (ServiceMonitoring) o;
+        EtlInstance that = (EtlInstance) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

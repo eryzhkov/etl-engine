@@ -1,7 +1,7 @@
 package etl.engine.ems.controller;
 
-import etl.engine.ems.dao.entity.ServiceMonitoring;
-import etl.engine.ems.dao.repository.ServiceMonitoringRepository;
+import etl.engine.ems.dao.entity.EtlInstance;
+import etl.engine.ems.dao.repository.EtlInstanceRepository;
 import etl.engine.ems.model.ResponseCollectionDto;
 import etl.engine.ems.model.ResponseStatus;
 import lombok.RequiredArgsConstructor;
@@ -10,25 +10,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/etl-instances")
 @RequiredArgsConstructor
-public class MonitoringController {
+public class EtlInstanceController {
 
-    private final ServiceMonitoringRepository serviceMonitoringRepository;
+    private final EtlInstanceRepository etlInstanceRepository;
 
-    @GetMapping(value = "/api/v1/monitoring/services")
-    public ResponseEntity<ResponseCollectionDto<ServiceMonitoring>> serviceMonitoring() {
+    @GetMapping
+    public ResponseEntity<ResponseCollectionDto<EtlInstance>> getAllEtlInstances() {
 
-        List<ServiceMonitoring> services = serviceMonitoringRepository.findAll();
+        List<EtlInstance> etlInstances = etlInstanceRepository.findAll();
 
-        final ResponseCollectionDto<ServiceMonitoring> body = new ResponseCollectionDto<>(
+        final ResponseCollectionDto<EtlInstance> body = new ResponseCollectionDto<>(
                 ResponseStatus.ok,
-                "Get all service instances",
-                services);
+                "Get all ETL-instances",
+                etlInstances);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
