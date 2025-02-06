@@ -4,9 +4,13 @@
 
 **Producer**: all ETL-service instances except ETL Management Service (EMS).
 
-**Consumer**: EMS
+**Consumer**: EMS.
 
-**Message format**: JSON
+**Message format**: JSON.
+
+**Partitions**: 1
+
+**Message retention time (ms)**: 180000 (180 sec) 
 
 The topic *ems.heartbeat* is used to notify EMS about the actual ETL-service instance status. 
 Each ETL-service instance should report its status with the fixed rate.
@@ -16,15 +20,14 @@ The expected status message structure is:
 ```json
 {
   "info": {
-    "type": "notification",
-    "signal": "service-status"
+    "notification": "instance-status",
+    "timestamp": date-time
   },
   "payload": {
     "id": uuid,
     "type": "DATA_EXTRACTOR|STRUCTURE_TRANSFORMER|DATA_TRANSFORMER|DATA_LOADER",
     "state": "idle|busy",
-    "workload": [],
-    "timestamp": date-time
+    "workload": []
   }
 }
 ```
@@ -45,7 +48,11 @@ EMS updates the *etl_instances* table using the messages.
 
 **Consumer**: all ETL-service instance of the DATA_EXTRACTOR type.
 
-**Message format**: JSON
+**Message format**: JSON.
+
+**Partitions**: 1
+
+**Message retention time (ms)**: 180000 (180 sec)
 
 The topic is used to publish commands to start a new ETL-execution of the ETL-process.
 
@@ -54,53 +61,25 @@ The expected command structure is:
 ```json
 {
   "info": {
-    "action": "etl-start",
+    "command": "etl-execution-start",
     "recipientInstanceId": uuid,
     "timestamp": date-time
   },
-  "etlExecution": {
-    "id": uuid,
-    "scheduledAt": date-time,
-    "acceptedAt": date-time,
-    "startedAt": date-time,
-    "finishedAt": date-time,
-    "comment": string,
-    "createdAt": date-time,
-    "updatedAt": date-time,
-    "etlProcess": {
-      "id": uuid,
-      "name": string,
-      "code": string,
-      "description": string,
-      "createdAt": date-time,
-      "updatedAt": date-time,
-      "externalSystem": {
-        "id": uuid,
-        "name": string,
-        "code": string,
-        "description": string,
-        "createdAt": date-time,
-        "updatedAt": date-time
-      }
-    },
-    "status": {
-      "id": 1,
-      "name": "SCHEDULED",
-      "description": "The ETL-execution was published to the EMS management topic.",
-      "createdAt": date-time,
-      "updatedAt": date-time
-    }
+  "payload": {
+    "etlExecutionId": uuid,
+    "externalSystemCode": string,
+    "etlProcessCode": string
   }
 }
 ```
 
 where:
 
-- *recipientInstanceId* is the unique identifier of the ETL-service instance (taken from the *etl_instances.instance_id* column).
+- *recipientInstanceId* is the unique identifier of the ETL-service instance of the 'DATA_EXTRACTOR' type (taken from the *etl_instances.instance_id* column).
 
 The ETL-service instance should put the needed information from the command to the preparation queue of ETL executions.
 
-The preparation queue handler should request the ETL-configuration for the ETL-process first. If succeeded, an ETL-execution 
+The preparation queue handler requests the ETL-configuration for the ETL-process first. If succeeded, an ETL-execution 
 job is created and enqueued to the ready-to-start queue. After that the handler should notify EMS via the *ems.progress* topic (see below) 
 that the ETL-execution is accepted.
 
@@ -108,11 +87,32 @@ that the ETL-execution is accepted.
 
 **Producer**: all ETL-service instances except ETL Management Service (EMS).
 
-**Consumer**: EMS
+**Consumer**: EMS.
 
-**Message format**: JSON
+**Message format**: JSON.
+
+**Partitions**: 1
+
+**Message retention time (ms)**: 180000 (180 sec)
 
 The topic is used by ETL-services to notify EMS about ETL-process execution.
+
+### The 'ETL-execution accepted' notification
+
+```json
+{
+  "info": {
+    "notification": "etl-execution-accepted",
+    "timestamp": date-time
+  },
+  "payload": {
+    "etlExecutionId": uuid
+  }
+}
+```
+The notification is sent by EDS (ETL Data-Extractor Service) when an ETL-execution is ready to be started.
+
+EMS updates the *accepted_at* value in the *etl_executions* table using the information from the message.
 
 ### The 'ETL-execution started' notification
 
@@ -122,12 +122,14 @@ The topic is used by ETL-services to notify EMS about ETL-process execution.
     "notification": "etl-execution-started",
     "timestamp": date-time
   },
-  "etlExecution": {
-    "id": uuid
+  "payload": {
+    "etlExecutionId": uuid
   }
 }
 ```
-The notification is sent by EDS (ETL Data-Extractor Service).
+The notification is sent by EDS (ETL Data-Extractor Service) when an ETL-execution is started.
+
+EMS updates the *started_at* value in the *etl_executions* table using the information from the message.
 
 ### The 'ETL-execution finished' notification
 
@@ -137,13 +139,15 @@ The notification is sent by EDS (ETL Data-Extractor Service).
     "notification": "etl-execution-finished",
     "timestamp": date-time
   },
-  "etlExecution": {
-    "id": uuid
+  "payload": {
+    "etlExecutionId": uuid
   }
 }
 ```
 
 The notification is sent by EDL (ETL Data-Loader Service).
+
+EMS updates the *finished_at* value in the *etl_executions* table using the information from the message.
 
 ### The 'ETL data stream started' notification
 
@@ -153,20 +157,16 @@ The notification is sent by EDL (ETL Data-Loader Service).
     "notification": "etl-data-stream-started",
     "timestamp": date-time
   },
-  "etlStreamExecution": {
-    "etlInstance": uuid,
-    "streamName": string,
-    "etlExecution": {
-      "id": uuid
-    },
-    "etlPhase": {
-      "code": "data-extract|structure-transform|data-transform|data-load"
-    }
+  "payload": {
+    "etlExecutionId": uuid,
+    "phase": "data-extract|structure-transform|data-transform|data-load",
+    "dataStreamName": string,
+    "instanceId": uuid
   }
 }
 ```
 
-EMS should add a new row to the *etl_executions* table using the information from the notification.
+EMS adds a new row to the *etl_phase_executions* table using the information from the notification.
 
 ### The 'ETL data stream finished' notification
 
@@ -176,17 +176,46 @@ EMS should add a new row to the *etl_executions* table using the information fro
     "notification": "etl-data-stream-finished",
     "timestamp": date-time
   },
-  "etlStreamExecution": {
-    "etlInstance": uuid,
-    "streamName": string,
-    "etlExecution": {
-      "id": uuid
-    },
-    "etlPhase": {
-      "code": "data-extract|structure-transform|data-transform|data-load"
-    }
+  "payload": {
+    "etlExecutionId": uuid,
+    "phase": "data-extract|structure-transform|data-transform|data-load",
+    "dataStreamName": string,
+    "instanceId": uuid
   }
 }
 ```
 
-EMS should update a row in the *etl_executions* table using the information from the notification.
+EMS updates the *stream_finished_at* value of the row in the *etl_phase_executions* table using the information from the notification.
+
+## The ems.stats topic
+
+**Producer**: all ETL-service instances except ETL Management Service (EMS).
+
+**Consumer**: EMS.
+
+**Message format**: JSON.
+
+**Partitions**: 1
+
+**Message retention time (ms)**: 180000 (180 sec)
+
+The topic is used to collect statistics during an ETL-execution.
+
+```json
+{
+  "info": {
+    "timestamp": date-time
+  },
+  "payload": {
+    "etlExecutionId": uuid,
+    "phase": "data-extract|structure-transform|data-transform|data-load",
+    "dataStreamName": string,
+    "instanceId": uuid,
+    "totalReadMessages": integer,
+    "totalWrittenMessages": integer,
+    "totalFailedMessages": integer
+  }
+}
+```
+
+The message should be sent when a processing of a data-stream is finished. Up to the moment all stats should be kept by ETL-service in memory.
