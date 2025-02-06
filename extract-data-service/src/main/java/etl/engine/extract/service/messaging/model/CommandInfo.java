@@ -1,13 +1,17 @@
-package etl.engine.ems.service.messaging.model;
+package etl.engine.extract.service.messaging.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Getter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CommandInfo {
 
     public static final String ETL_EXECUTION_START = "etl-execution-start";
@@ -16,9 +20,4 @@ public class CommandInfo {
     private final UUID recipientInstanceId;
     private final OffsetDateTime timestamp;
 
-    public CommandInfo(String command, UUID recipientInstanceId) {
-        this.command = command;
-        this.recipientInstanceId = recipientInstanceId;
-        this.timestamp = OffsetDateTime.now();
-    }
 }

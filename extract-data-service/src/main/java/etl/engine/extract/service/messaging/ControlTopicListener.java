@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.extract.service.instance.InstanceStatus;
+import etl.engine.extract.service.messaging.model.CommandInfo;
+import etl.engine.extract.service.messaging.model.EtlExecutionStartCommandPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -18,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ControlTopicListener {
 
+    private final static String INFO_COMMAND_PTR = "/info/command";
     private final static String INFO_RECIPIENT_PTR = "/info/recipientInstanceId";
+    private final static String PAYLOAD_PTR = "/payload";
 
     private final InstanceStatus instanceStatus;
     private final ObjectMapper mapper;
@@ -35,11 +39,23 @@ public class ControlTopicListener {
             log.debug("instanceId = '{}'", instanceStatus.getInstanceId());
             if (instanceStatus.getInstanceId().toString().equals(recipientInstanceId)) {
                 log.info("The received command should be processed in the instance.");
+                JsonPointer infoCommandPtr = JsonPointer.compile(INFO_COMMAND_PTR);
+                final String commandValue = document.at(infoCommandPtr).asText();
+                if (CommandInfo.ETL_EXECUTION_START.equals(commandValue)) {
+                    log.debug("Found command: '{}'", commandValue);
+                    JsonPointer payloadPtr = JsonPointer.compile(PAYLOAD_PTR);
+                    JsonNode payloadNode = document.at(payloadPtr);
+                    EtlExecutionStartCommandPayload commandPayload = mapper.treeToValue(payloadNode, EtlExecutionStartCommandPayload.class);
+                    log.debug("command payload: {}", commandPayload);
+                } else {
+                    log.warn("The unknown command was found - '{}'. The messages is ignored.", commandValue);
+                }
             } else {
-                log.info("The received command is not for the instance and ignored.");
+                log.info("The received command is not for the instance and ignored. The recipientInstanceId={} but the instanceId={}.",
+                        recipientInstanceId, instanceStatus.getInstanceId());
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error("{}", e.getMessage(), e);
         }
     }
 

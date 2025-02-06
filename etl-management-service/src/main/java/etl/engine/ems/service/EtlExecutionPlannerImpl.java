@@ -10,7 +10,9 @@ import etl.engine.ems.exception.EntityNotFoundException;
 import etl.engine.ems.mapper.EtlExecutionMapper;
 import etl.engine.ems.model.EtlExecutionDto;
 import etl.engine.ems.model.EtlInstanceDto;
-import etl.engine.ems.service.messaging.model.EtlStartCommand;
+import etl.engine.ems.service.messaging.model.CommandInfo;
+import etl.engine.ems.service.messaging.model.EtlCommand;
+import etl.engine.ems.service.messaging.model.EtlExecutionStartCommandPayload;
 import etl.engine.ems.service.monitoring.instance.EtlInstanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,12 +66,20 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
         log.debug("ETL-execution was created: {}", createdEtlExecution);
 
         // Notify the found ETL-service instance about the new ETL-execution
-        EtlExecutionDto etlExecutionDto = etlExecutionMapper.toEtlExecutionDto(createdEtlExecution);
-        EtlStartCommand etlStartCommand = new EtlStartCommand(etlInstanceDto.getId(), etlExecutionDto);
-        log.debug("The 'etl-start' command to be sent: {}", etlStartCommand);
+        EtlExecutionStartCommandPayload payload = EtlExecutionStartCommandPayload
+                .builder()
+                .etlExecutionId(createdEtlExecution.getId())
+                .externalSystemCode(etlProcessToBeRun.getExternalSystem().getCode())
+                .etlProcessCode(etlProcessToBeRun.getCode())
+                .build();
+        EtlCommand<EtlExecutionStartCommandPayload> etlStartCommand = new EtlCommand<>(
+                CommandInfo.ETL_EXECUTION_START,
+                etlInstanceDto.getId(),
+                payload
+        );
+        log.debug("The 'etl-execution-start' command to be published: {}", etlStartCommand);
         kafkaTemplate.send(controlTopicName, etlStartCommand);
-
-        log.debug("ETL-execution is created and the command is published.");
+        log.debug("The command 'etl-execution-start' was published.");
         return etlExecutionMapper.toEtlExecutionDto(createdEtlExecution);
     }
 }
