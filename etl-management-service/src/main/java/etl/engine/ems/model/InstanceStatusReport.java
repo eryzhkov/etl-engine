@@ -1,5 +1,6 @@
 package etl.engine.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import etl.engine.ems.service.monitoring.instance.EtlInstanceMonitoringListener;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceStatusReport {
 
     @JsonProperty("id")

@@ -27,6 +27,10 @@ public class InstanceStatus {
         return "DATA_EXTRACTOR";
     }
 
+    public String getPhase() {
+        return "data-extract";
+    }
+
     public String getState() {
         // At the moment the instance can report the 'idle' state only.
         return InstanceState.idle.toString();
