@@ -14,6 +14,8 @@ logging:
     org.springframework.kafka.transaction: "debug"
     etl.engine.extract: "debug"
 eds:
+  ems:
+    url: "${EDS_EMS_URL}"
   kafka:
     bootstrap-servers: "${EDS_KAFKA_BOOTSTRAP_SERVERS}"
     topics:
