@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import etl.engine.extract.service.EtlExecutionManager;
 import etl.engine.extract.service.instance.InstanceInfoManager;
 import etl.engine.extract.service.messaging.model.CommandInfo;
 import etl.engine.extract.service.messaging.model.EtlExecutionStartCommandPayload;
@@ -26,9 +27,10 @@ public class ControlTopicListener {
 
     private final InstanceInfoManager instanceInfoManager;
     private final ObjectMapper mapper;
+    private final EtlExecutionManager etlExecutionManager;
 
     @KafkaHandler
-    @Transactional
+    @Transactional("kafkaTransactionManager")
     public void listener(String message) {
         log.debug("Got a command: {}", message);
         try {
@@ -46,7 +48,8 @@ public class ControlTopicListener {
                     JsonPointer payloadPtr = JsonPointer.compile(PAYLOAD_PTR);
                     JsonNode payloadNode = document.at(payloadPtr);
                     EtlExecutionStartCommandPayload commandPayload = mapper.treeToValue(payloadNode, EtlExecutionStartCommandPayload.class);
-                    log.debug("command payload: {}", commandPayload);
+                    log.debug("Extracted command payload: {}", commandPayload);
+                    etlExecutionManager.runEtlExecution(commandPayload);
                 } else {
                     log.warn("The unknown command was found - '{}'. The messages is ignored.", commandValue);
                 }

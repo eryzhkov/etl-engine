@@ -38,10 +38,11 @@ services:
       - EDS_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
       - EDS_KAFKA_TOPICS_HEARTBEAT=ems.heartbeat
       - EDS_KAFKA_TOPICS_CONTROL=ems.control
+      - EDS_KAFKA_TOPICS_PROGRESS=ems.progress
       - EDS_STATUS_REPORTING_ENABLED=true
       - EDS_STATUS_REPORTING_INITIAL_DELAY_MS=5000
       - EDS_STATUS_REPORTING_FIXED_RATE_MS=10000
-      - EDS_EMS_UR=etl-ems:8080
+      - EDS_EMS_URL=http://etl-ems:8080
     ports:
       - "8081:8080"
     healthcheck:

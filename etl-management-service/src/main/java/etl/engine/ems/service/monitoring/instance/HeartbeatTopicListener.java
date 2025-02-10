@@ -22,7 +22,7 @@ import java.time.OffsetDateTime;
 @KafkaListener(groupId = "${ems.kafka.consumer.group}", topics = "${ems.kafka.topics.heartbeat}")
 @RequiredArgsConstructor
 @Slf4j
-public class EtlInstanceMonitoringListener {
+public class HeartbeatTopicListener {
 
     private final static String INFO_NOTIFICATION_PTR = "/info/notification";
     private final static String INFO_TIMESTAMP_PTR = "/info/timestamp";

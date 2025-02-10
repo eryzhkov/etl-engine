@@ -1,5 +1,5 @@
 {
-  "connector": {
+  "extractor": {
     "type": "jdbc",
     "data": {
       "dbType": "postgresql",

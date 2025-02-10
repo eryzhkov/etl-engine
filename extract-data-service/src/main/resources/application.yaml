@@ -21,6 +21,7 @@ eds:
     topics:
       heartbeat: "${EDS_KAFKA_TOPICS_HEARTBEAT}"
       control: "${EDS_KAFKA_TOPICS_CONTROL}"
+      progress: "${EDS_KAFKA_TOPICS_PROGRESS}"
     consumer:
       group: "${spring.application.name}"
   status-reporting:

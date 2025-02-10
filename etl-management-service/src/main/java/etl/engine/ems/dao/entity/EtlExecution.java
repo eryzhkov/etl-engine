@@ -11,7 +11,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -20,7 +19,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Immutable
 @Table(name = "etl_executions")
 @Getter
 @Setter
