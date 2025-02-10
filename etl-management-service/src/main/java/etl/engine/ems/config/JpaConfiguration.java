@@ -1,6 +1,7 @@
 package etl.engine.ems.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Configuration
 @EnableJpaRepositories(basePackages = "etl.engine.ems.dao")
 @EnableJpaAuditing(dateTimeProviderRef = "auditingCustomOffsetDateTimeProvider")
+@Slf4j
 public class JpaConfiguration {
 
     // The Spring JPA Audit doesn't understand the OffsetDataTime class.

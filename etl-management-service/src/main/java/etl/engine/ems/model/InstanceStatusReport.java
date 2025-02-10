@@ -2,7 +2,7 @@ package etl.engine.ems.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import etl.engine.ems.service.monitoring.instance.EtlInstanceMonitoringListener;
+import etl.engine.ems.service.monitoring.instance.HeartbeatTopicListener;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * The class is used to deserialize the service status report from the message.
- * @see EtlInstanceMonitoringListener#listener(String)
+ * @see HeartbeatTopicListener#listener(String)
  */
 @Getter
 @Setter

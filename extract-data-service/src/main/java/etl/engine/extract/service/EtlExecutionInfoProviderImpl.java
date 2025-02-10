@@ -40,13 +40,15 @@ public class EtlExecutionInfoProviderImpl implements EtlExecutionInfoProvider {
         );
         log.debug("ETL-configuration is loaded. Try to parse data streams.");
         Map<String, DataStreamInfo> dataStreamsInfo = etlExecutionInfo.getDataStreamsInfo();
-        JsonNode dataStreams = etlConfiguration.at(JsonPointer.compile("/data/streams"));
+        JsonNode dataStreams = etlConfiguration.at(JsonPointer.compile("/streams"));
         for(JsonNode dataStream : dataStreams) {
-            String dataStreamCode = dataStream.at(JsonPointer.compile("/code")).asText();
+            String dataStreamCode = dataStream.at(JsonPointer.compile("/name")).asText();
             DataStreamInfo dataStreamInfo = new DataStreamInfo(dataStreamCode, dataStream);
             dataStreamsInfo.putIfAbsent(dataStreamCode, dataStreamInfo);
             log.debug("Added configuration for the data stream '{}'.", dataStreamCode);
         }
+        //TODO Check the size of the dataStreamsInfo! If it is 0 - throw EtlConfigurationNoStreamsDefinedException.
+        log.debug("EtlExecutionInfo: {}", etlExecutionInfo);
         log.debug("EtlExecutionInfo is ready.");
         return etlExecutionInfo;
     }

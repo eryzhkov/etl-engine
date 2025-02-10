@@ -14,8 +14,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Immutable
 @Table(name = "etl_execution_statuses")
+@Immutable
 @Getter
 @Setter
 @ToString(callSuper = true)
