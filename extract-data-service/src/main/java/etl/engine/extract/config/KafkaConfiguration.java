@@ -1,6 +1,6 @@
 package etl.engine.extract.config;
 
-import etl.engine.extract.service.instance.InstanceStatus;
+import etl.engine.extract.service.instance.InstanceInfoManager;
 import etl.engine.extract.service.messaging.CustomJsonSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -35,7 +35,7 @@ public class KafkaConfiguration {
     @Value("${eds.kafka.consumer.group}")
     private String consumerGroupName;
 
-    private final InstanceStatus instanceStatus;
+    private final InstanceInfoManager instanceInfoManager;
 
     @Bean
     public Map<String, Object> producerConfiguration() {
@@ -49,15 +49,15 @@ public class KafkaConfiguration {
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         DefaultKafkaProducerFactory<String, Object> defaultKafkaProducerFactory = new DefaultKafkaProducerFactory<>(producerConfiguration());
-        defaultKafkaProducerFactory.setTransactionIdPrefix("eds-tx-" + instanceStatus.getInstanceId());
+        defaultKafkaProducerFactory.setTransactionIdPrefix("eds-tx-" + instanceInfoManager.getInstanceId());
         return defaultKafkaProducerFactory;
     }
 
     public Map<String, Object> consumerConfiguration() {
         Map<String, Object> configuration = new HashMap<>();
         configuration.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configuration.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupName + "-" + instanceStatus.getInstanceId());
-        configuration.put(ConsumerConfig.CLIENT_ID_CONFIG, "eds-" + instanceStatus.getInstanceId());
+        configuration.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupName + "-" + instanceInfoManager.getInstanceId());
+        configuration.put(ConsumerConfig.CLIENT_ID_CONFIG, "eds-" + instanceInfoManager.getInstanceId());
         configuration.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configuration.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configuration.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
