@@ -1,8 +1,8 @@
 package etl.engine.extract.service.instance;
 
+import etl.engine.extract.model.EtlExecutionInfo;
 import etl.engine.extract.model.event.Event;
 import etl.engine.extract.model.event.EventInfo;
-import etl.engine.extract.model.workload.Workload;
 import etl.engine.extract.service.messaging.MessagingService;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -27,7 +27,7 @@ public class InstanceStatusReporter {
 
     @Value("${eds.status-reporting.enabled}")
     private boolean isReportingEnabled;
-    private final InstanceStatus instanceStatus;
+    private final InstanceInfoManager instanceInfoManager;
     private final MessagingService messagingService;
 
     @Scheduled(
@@ -36,10 +36,10 @@ public class InstanceStatusReporter {
     public void report() {
         if (isReportingEnabled) {
             InstanceStatusReport statusReport = new InstanceStatusReport(
-                    instanceStatus.getInstanceId(),
-                    instanceStatus.getType(),
-                    instanceStatus.getState(),
-                    instanceStatus.getWorkload()
+                    instanceInfoManager.getInstanceId(),
+                    instanceInfoManager.getType(),
+                    instanceInfoManager.getState(),
+                    instanceInfoManager.getWorkload()
             );
             Event<InstanceStatusReport> event = new Event<>(
                     new EventInfo(EventInfo.NOTIFICATION_INSTANCE_STATUS),
@@ -66,7 +66,7 @@ public class InstanceStatusReporter {
         private UUID id;
         private String type;
         private String state;
-        private List<Workload> workload;
+        private Collection<EtlExecutionInfo> workload;
     }
 
 }

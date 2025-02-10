@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import etl.engine.extract.service.instance.InstanceStatus;
+import etl.engine.extract.service.instance.InstanceInfoManager;
 import etl.engine.extract.service.messaging.model.CommandInfo;
 import etl.engine.extract.service.messaging.model.EtlExecutionStartCommandPayload;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ControlTopicListener {
     private final static String INFO_RECIPIENT_PTR = "/info/recipientInstanceId";
     private final static String PAYLOAD_PTR = "/payload";
 
-    private final InstanceStatus instanceStatus;
+    private final InstanceInfoManager instanceInfoManager;
     private final ObjectMapper mapper;
 
     @KafkaHandler
@@ -36,8 +36,8 @@ public class ControlTopicListener {
             JsonPointer recipientInstanceIdPtr = JsonPointer.compile(INFO_RECIPIENT_PTR);
             final String recipientInstanceId = document.at(recipientInstanceIdPtr).asText();
             log.debug("recipientInstanceId = '{}'", recipientInstanceId);
-            log.debug("instanceId = '{}'", instanceStatus.getInstanceId());
-            if (instanceStatus.getInstanceId().toString().equals(recipientInstanceId)) {
+            log.debug("instanceId = '{}'", instanceInfoManager.getInstanceId());
+            if (instanceInfoManager.getInstanceId().toString().equals(recipientInstanceId)) {
                 log.info("The received command should be processed in the instance.");
                 JsonPointer infoCommandPtr = JsonPointer.compile(INFO_COMMAND_PTR);
                 final String commandValue = document.at(infoCommandPtr).asText();
@@ -52,7 +52,7 @@ public class ControlTopicListener {
                 }
             } else {
                 log.info("The received command is not for the instance and ignored. The recipientInstanceId={} but the instanceId={}.",
-                        recipientInstanceId, instanceStatus.getInstanceId());
+                        recipientInstanceId, instanceInfoManager.getInstanceId());
             }
         } catch (JsonProcessingException e) {
             log.error("{}", e.getMessage(), e);
