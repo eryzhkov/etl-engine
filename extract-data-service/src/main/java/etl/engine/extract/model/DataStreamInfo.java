@@ -1,5 +1,6 @@
 package etl.engine.extract.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import lombok.ToString;
 public class DataStreamInfo {
 
     private final String dataStreamCode;
+
+    private final JsonNode config;
 
     @Setter
     private long totalReadMessages = -1L;

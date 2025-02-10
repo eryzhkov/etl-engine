@@ -41,6 +41,7 @@ services:
       - EDS_STATUS_REPORTING_ENABLED=true
       - EDS_STATUS_REPORTING_INITIAL_DELAY_MS=5000
       - EDS_STATUS_REPORTING_FIXED_RATE_MS=10000
+      - EDS_EMS_UR=etl-ems:8080
     ports:
       - "8081:8080"
     healthcheck:
