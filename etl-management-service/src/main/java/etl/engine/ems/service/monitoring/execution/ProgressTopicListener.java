@@ -32,7 +32,7 @@ public class ProgressTopicListener {
         log.debug("The received message: {}", message);
         try {
             JsonNode document = mapper.readTree(message);
-            String notification = document.at(JsonPointer.compile("/info/notification")).asText();
+            String notification = document.at(JsonPointer.compile("/info/type")).asText();
             UUID etlExecutionId = getExecutionId(document);
             OffsetDateTime timestamp = getTimestamp(document);
             log.debug("Extracted notification='{}', timestamp='{}', etlExecutionId='{}'.",
@@ -49,7 +49,7 @@ public class ProgressTopicListener {
                     etlExecutionService.markEtlExecutionAsFinishedAt(etlExecutionId, timestamp);
                 } else if (EtlNotification.ETL_EXECUTION_FAILED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-failed
-                    etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp);
+                    etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp, getMessage(document));
                 } else {
                     log.warn("Unsupported notification type found '{}'. The message is ignored.", notification);
                 }
@@ -69,6 +69,10 @@ public class ProgressTopicListener {
     private UUID getExecutionId(JsonNode document) {
         String value = document.at(JsonPointer.compile("/payload/etlExecutionId")).asText();
         return UUID.fromString(value);
+    }
+
+    private String getMessage(JsonNode document) {
+        return document.at(JsonPointer.compile("/payload/message")).asText();
     }
 
 }

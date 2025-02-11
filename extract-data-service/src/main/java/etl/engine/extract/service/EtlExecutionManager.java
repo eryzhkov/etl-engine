@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonPointer;
 import etl.engine.extract.exception.EtlConfigurationLoadException;
 import etl.engine.extract.exception.EtlConfigurationParseException;
 import etl.engine.extract.model.EtlExecutionInfo;
+import etl.engine.extract.model.messaging.EmsMessageEtlExecutionStartPayload;
+import etl.engine.extract.model.messaging.EmsMessageInfo;
 import etl.engine.extract.service.instance.InstanceInfoManager;
-import etl.engine.extract.service.messaging.model.EtlExecutionPayload;
-import etl.engine.extract.service.messaging.model.EtlExecutionStartCommandPayload;
-import etl.engine.extract.service.messaging.model.EtlNotification;
+import etl.engine.extract.service.messaging.MessagingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +25,11 @@ public class EtlExecutionManager {
 
     private final InstanceInfoManager instanceInfoManager;
     private final EtlExecutionInfoProvider etlExecutionInfoProvider;
+    private final MessagingService messagingService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Async("etlExecutionPool")
-    public void runEtlExecution(EtlExecutionStartCommandPayload commandPayload) {
+    public void runEtlExecution(EmsMessageEtlExecutionStartPayload commandPayload) {
         log.debug("Start ETL-execution for the command {}", commandPayload);
         try {
             EtlExecutionInfo etlExecutionInfo = etlExecutionInfoProvider.getExecutionInfo(
@@ -40,44 +41,34 @@ public class EtlExecutionManager {
             log.debug("ETL-execution info is added to the instance info.");
 
             // Notify EMS the ETL-execution is accepted.
-            final EtlNotification<EtlExecutionPayload> acceptedNotification = new EtlNotification<>(
-                    EtlNotification.ETL_EXECUTION_ACCEPTED,
-                    new EtlExecutionPayload(etlExecutionInfo.getExecutionId()));
-            kafkaTemplate.executeInTransaction(
-                    template -> template.send(progressTopicName, acceptedNotification)
-            );
+            messagingService.publishEtlExecutionNotification(
+                    EmsMessageInfo.ETL_EXECUTION_ACCEPTED_TYPE,
+                    etlExecutionInfo.getExecutionId());
 
             // Create the extractor
             String extractorType = etlExecutionInfo.getConfiguration().at(JsonPointer.compile("/extractor/type")).asText();
             log.debug("Found extractor type is '{}'.", extractorType);
 
             // Notify EMS the ETL-execution is started.
-            final EtlNotification<EtlExecutionPayload> startedNotification = new EtlNotification<>(
-                    EtlNotification.ETL_EXECUTION_STARTED,
-                    new EtlExecutionPayload(etlExecutionInfo.getExecutionId()));
-            kafkaTemplate.executeInTransaction(
-                    template -> template.send(progressTopicName, startedNotification)
-            );
+            messagingService.publishEtlExecutionNotification(
+                    EmsMessageInfo.ETL_EXECUTION_STARTED_TYPE,
+                    etlExecutionInfo.getExecutionId());
 
             // Notify EMS the ETL-execution is finished.
-            final EtlNotification<EtlExecutionPayload> finishedNotification = new EtlNotification<>(
-                    EtlNotification.ETL_EXECUTION_FINISHED,
-                    new EtlExecutionPayload(etlExecutionInfo.getExecutionId()));
-            kafkaTemplate.executeInTransaction(
-                    template -> template.send(progressTopicName, finishedNotification)
-            );
+            messagingService.publishEtlExecutionNotification(
+                    EmsMessageInfo.ETL_EXECUTION_FINISHED_TYPE,
+                    etlExecutionInfo.getExecutionId());
 
             instanceInfoManager.deleteEtlExecutionInfo(etlExecutionInfo.getExecutionId());
             log.debug("ETL-execution info is deleted from the instance info.");
-            //TODO Send the 'finished' message to the ems.progress/sts.data topics!
+            //TODO Send the 'finished' message to the sts.data topics!
         } catch (EtlConfigurationLoadException | EtlConfigurationParseException e) {
             log.error("{}", e.getMessage(), e);
             // Notify EMS the ETL-execution is failed.
-            final EtlNotification<String> failedNotification = new EtlNotification<>(
-                    EtlNotification.ETL_EXECUTION_FAILED,
-                    e.getMessage());
-            kafkaTemplate.executeInTransaction(
-                    template -> template.send(progressTopicName, failedNotification)
+            messagingService.publishEtlExecutionNotificationWithMessage(
+                    EmsMessageInfo.ETL_EXECUTION_FAILED_TYPE,
+                    commandPayload.getEtlExecutionId(),
+                    e.getMessage()
             );
         }
     }

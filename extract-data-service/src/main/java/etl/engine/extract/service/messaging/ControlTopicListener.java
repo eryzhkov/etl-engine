@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import etl.engine.extract.model.messaging.EmsMessageCommandInfo;
+import etl.engine.extract.model.messaging.EmsMessageEtlExecutionStartPayload;
 import etl.engine.extract.service.EtlExecutionManager;
 import etl.engine.extract.service.instance.InstanceInfoManager;
-import etl.engine.extract.service.messaging.model.CommandInfo;
-import etl.engine.extract.service.messaging.model.EtlExecutionStartCommandPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -42,16 +42,16 @@ public class ControlTopicListener {
             if (instanceInfoManager.getInstanceId().toString().equals(recipientInstanceId)) {
                 log.info("The received command should be processed in the instance.");
                 JsonPointer infoCommandPtr = JsonPointer.compile(INFO_COMMAND_PTR);
-                final String commandValue = document.at(infoCommandPtr).asText();
-                if (CommandInfo.ETL_EXECUTION_START.equals(commandValue)) {
-                    log.debug("Found command: '{}'", commandValue);
+                final String commandType = document.at(infoCommandPtr).asText();
+                if (EmsMessageCommandInfo.ETL_EXECUTION_START_TYPE.equals(commandType)) {
+                    log.debug("Found command: '{}'", commandType);
                     JsonPointer payloadPtr = JsonPointer.compile(PAYLOAD_PTR);
                     JsonNode payloadNode = document.at(payloadPtr);
-                    EtlExecutionStartCommandPayload commandPayload = mapper.treeToValue(payloadNode, EtlExecutionStartCommandPayload.class);
-                    log.debug("Extracted command payload: {}", commandPayload);
-                    etlExecutionManager.runEtlExecution(commandPayload);
+                    EmsMessageEtlExecutionStartPayload command = mapper.treeToValue(payloadNode, EmsMessageEtlExecutionStartPayload.class);
+                    log.debug("Extracted command payload: {}", command);
+                    etlExecutionManager.runEtlExecution(command);
                 } else {
-                    log.warn("The unknown command was found - '{}'. The messages is ignored.", commandValue);
+                    log.warn("The unknown command was found - '{}'. The messages is ignored.", commandType);
                 }
             } else {
                 log.info("The received command is not for the instance and ignored. The recipientInstanceId={} but the instanceId={}.",
