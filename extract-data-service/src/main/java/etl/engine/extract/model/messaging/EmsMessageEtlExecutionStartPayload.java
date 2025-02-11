@@ -1,4 +1,4 @@
-package etl.engine.extract.service.messaging.model;
+package etl.engine.extract.model.messaging;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter
 @ToString
-public class EtlExecutionStartCommandPayload {
+public class EmsMessageEtlExecutionStartPayload {
 
     private final UUID etlExecutionId;
     private final String externalSystemCode;

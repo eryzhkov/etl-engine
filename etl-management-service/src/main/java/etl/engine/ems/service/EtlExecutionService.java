@@ -72,7 +72,7 @@ public class EtlExecutionService {
     }
 
     @Transactional(propagation = Propagation.NESTED)
-    public void markEtlExecutionAsFailedAt(UUID etlExecutionId, OffsetDateTime failedAt)
+    public void markEtlExecutionAsFailedAt(UUID etlExecutionId, OffsetDateTime failedAt, String reason)
             throws EntityNotFoundException {
         EtlExecution etlExecution = etlExecutionRepository
                 .findById(etlExecutionId)
@@ -83,6 +83,7 @@ public class EtlExecutionService {
         log.debug("The status 'FAILED' was found in the repository");
         etlExecution.setStatus(status);
         etlExecution.setFinishedAt(failedAt);
+        etlExecution.setComment(reason);
         etlExecutionRepository.save(etlExecution);
     }
 

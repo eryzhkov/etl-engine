@@ -24,7 +24,7 @@ import java.time.OffsetDateTime;
 @Slf4j
 public class HeartbeatTopicListener {
 
-    private final static String INFO_NOTIFICATION_PTR = "/info/notification";
+    private final static String INFO_NOTIFICATION_PTR = "/info/type";
     private final static String INFO_TIMESTAMP_PTR = "/info/timestamp";
     private final static String PAYLOAD_PTR = "/payload";
     private final static String NOTIFICATION = "instance-status";
