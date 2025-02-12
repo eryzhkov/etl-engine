@@ -29,7 +29,7 @@ public class InstanceStatusReporter {
             fixedRateString = "${eds.status-reporting.fixed-rate-ms}")
     public void report() {
         if (isReportingEnabled) {
-            EmsMessageInfo info = new EmsMessageInfo(EmsMessageInfo.INSTANCE_STATUS_TYPE);
+            EmsMessageInfo info = new EmsMessageInfo(EmsMessageInfo.INSTANCE_STATUS);
             EmsMessageInstanceStatusPayload payload = new EmsMessageInstanceStatusPayload(
                     instanceInfoManager.getInstanceId(),
                     instanceInfoManager.getType(),

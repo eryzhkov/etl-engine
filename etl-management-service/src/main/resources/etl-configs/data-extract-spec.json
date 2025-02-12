@@ -1,7 +1,7 @@
 {
   "extractor": {
     "type": "jdbc",
-    "data": {
+    "config": {
       "dbType": "postgresql",
       "host": "etl-postgres-db",
       "port": 5432,

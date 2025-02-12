@@ -9,11 +9,15 @@ import java.time.OffsetDateTime;
 @ToString
 public class EmsMessageInfo {
 
-    public static final String INSTANCE_STATUS_TYPE = "instance-status";
-    public static final String ETL_EXECUTION_ACCEPTED_TYPE = "etl-execution-accepted";
-    public static final String ETL_EXECUTION_STARTED_TYPE = "etl-execution-started";
-    public static final String ETL_EXECUTION_FINISHED_TYPE = "etl-execution-finished";
-    public static final String ETL_EXECUTION_FAILED_TYPE = "etl-execution-failed";
+    public static final String INSTANCE_STATUS = "instance-status";
+    public static final String ETL_EXECUTION_ACCEPTED = "etl-execution-accepted";
+    public static final String ETL_EXECUTION_STARTED = "etl-execution-started";
+    public static final String ETL_EXECUTION_FINISHED = "etl-execution-finished";
+    public static final String ETL_EXECUTION_FAILED = "etl-execution-failed";
+    public static final String ETL_DATA_STREAM_STARTED = "etl-data-stream-started";
+    public static final String ETL_DATA_STREAM_FINISHED = "etl-data-stream-finished";
+    public static final String ETL_DATA_STREAM_FAILED = "etl-data-stream-failed";
+    public static final String ETL_DATA_STREAM_STATS = "etl-data-stream-stats";
 
     private final String type;
     private final OffsetDateTime timestamp;

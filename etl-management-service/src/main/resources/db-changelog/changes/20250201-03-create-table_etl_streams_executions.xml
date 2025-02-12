@@ -22,9 +22,12 @@
       <column name="stream_name" type="varchar(100)" remarks="The data stream name of the ETL-process.">
         <constraints nullable="false" notNullConstraintName="nn_etl_streams_executions_stream_name"/>
       </column>
-      <column name="stream_started_at" type="timestamptz" remarks="The date-time when the ETL-phase was started by the ETL-service."/>
-      <column name="stream_finished_at" type="timestamptz" remarks="The date-time when the ETL-phase was finished by the ETL-service."/>
-      <column name="total_processed_messages" type="java.lang.Long" defaultValue="-1" remarks="Total successfully processed messages in the ETL-phase."/>
+      <column name="stream_started_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was started by the ETL-service."/>
+      <column name="stream_finished_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was finished by the ETL-service."/>
+      <column name="stream_failed_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was failed by the ETL-service."/>
+      <column name="comment" type="text" remarks="Free text comment."/>
+      <column name="total_in_messages" type="java.lang.Long" defaultValue="-1" remarks="Total successfully read messages in the ETL-phase."/>
+      <column name="total_out_messages" type="java.lang.Long" defaultValue="-1" remarks="Total successfully written messages in the ETL-phase."/>
       <column name="total_failed_messages" type="java.lang.Long" defaultValue="-1" remarks="Total failed messages in the ETL-phase."/>
       <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
         <constraints notNullConstraintName="nn_etl_streams_executions_created_at" nullable="false"/>

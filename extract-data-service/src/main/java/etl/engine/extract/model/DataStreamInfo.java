@@ -13,21 +13,21 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class DataStreamInfo {
 
-    private final String dataStreamCode;
+    private final String dataStreamName;
 
     private final JsonNode config;
 
     @Setter
-    private long totalReadMessages = -1L;
+    private long totalInMessages = -1L;
 
     @Setter
-    private long totalWrittenMessages = -1L;
+    private long totalOutMessages = -1L;
 
     @Setter
     private long totalFailedMessages = -1L;
 
-    public void incrementTotalWrittenMessages() {
-        this.totalWrittenMessages++;
+    public void incrementTotalOutMessages() {
+        this.totalOutMessages++;
     }
 
 }
