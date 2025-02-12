@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Getter
 public class EtlNotificationInfo {
 
-    private final String notification;
+    private final String type;
     private final OffsetDateTime timestamp = OffsetDateTime.now();
 
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.ems.exception.EntityNotFoundException;
+import etl.engine.ems.service.EtlDataStreamExecutionService;
 import etl.engine.ems.service.EtlExecutionService;
 import etl.engine.ems.service.messaging.model.EtlNotification;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ProgressTopicListener {
 
     private final ObjectMapper mapper;
     private final EtlExecutionService etlExecutionService;
+    private final EtlDataStreamExecutionService etlDataStreamExecutionService;
 
     @KafkaHandler
     @Transactional("kafkaTransactionManager")
@@ -50,6 +52,37 @@ public class ProgressTopicListener {
                 } else if (EtlNotification.ETL_EXECUTION_FAILED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-failed
                     etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp, getMessage(document));
+                } else if (EtlNotification.ETL_DATA_STREAM_STARTED.equalsIgnoreCase(notification)) {
+                    etlDataStreamExecutionService.startEtlDataStream(
+                            etlExecutionId,
+                            readValueAsString(document, "/payload/phase"),
+                            readValueAsString(document, "/payload/dataStreamName"),
+                            readValueAsUUID(document, "/payload/instanceId"),
+                            timestamp);
+                } else if (EtlNotification.ETL_DATA_STREAM_FINISHED.equalsIgnoreCase(notification)) {
+                    etlDataStreamExecutionService.finishEtlDataStream(
+                            etlExecutionId,
+                            readValueAsString(document, "/payload/phase"),
+                            readValueAsString(document, "/payload/dataStreamName"),
+                            timestamp
+                    );
+                } else if (EtlNotification.ETL_DATA_STREAM_FAILED.equalsIgnoreCase(notification)) {
+                    etlDataStreamExecutionService.failEtlDataStream(
+                            etlExecutionId,
+                            readValueAsString(document, "/payload/phase"),
+                            readValueAsString(document, "/payload/dataStreamName"),
+                            timestamp,
+                            readValueAsString(document, "/payload/error")
+                    );
+                } else if (EtlNotification.ETL_DATA_STREAM_STATS.equalsIgnoreCase(notification)) {
+                    etlDataStreamExecutionService.updateEtlDataStreamStats(
+                            etlExecutionId,
+                            readValueAsString(document, "/payload/phase"),
+                            readValueAsString(document, "/payload/dataStreamName"),
+                            readValueAsLong(document, "/payload/totalInMessages"),
+                            readValueAsLong(document, "/payload/totalOutMessages"),
+                            readValueAsLong(document, "/payload/totalFailedMessages")
+                    );
                 } else {
                     log.warn("Unsupported notification type found '{}'. The message is ignored.", notification);
                 }
@@ -57,7 +90,7 @@ public class ProgressTopicListener {
                 log.warn("Found null notification type. The message is ignored.");
             }
         } catch (JsonProcessingException | EntityNotFoundException e) {
-            log.error("{}", e.getMessage(), e);
+            log.error("The message is ignored due to the error: {}", e.getMessage(), e);
         }
     }
 
@@ -73,6 +106,19 @@ public class ProgressTopicListener {
 
     private String getMessage(JsonNode document) {
         return document.at(JsonPointer.compile("/payload/message")).asText();
+    }
+
+    private String readValueAsString(JsonNode document, String path) {
+        return document.at(JsonPointer.compile(path)).asText();
+    }
+
+    private UUID readValueAsUUID(JsonNode document, String path) {
+        String value = document.at(JsonPointer.compile(path)).asText();
+        return UUID.fromString(value);
+    }
+
+    private long readValueAsLong(JsonNode document, String path) {
+        return document.at(JsonPointer.compile(path)).asLong();
     }
 
 }

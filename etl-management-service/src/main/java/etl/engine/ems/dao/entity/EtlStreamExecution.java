@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "etl_stream_executions")
+@Table(name = "etl_streams_executions")
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -41,8 +41,17 @@ public class EtlStreamExecution extends AuditableEntity implements Serializable 
     @Column(name = "stream_finished_at")
     private OffsetDateTime streamFinishedAt;
 
-    @Column(name = "total_processed_messages")
-    private Long totalProcessedMessages = -1L;
+    @Column(name = "stream_failed_at")
+    private OffsetDateTime streamFailedAt;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "total_in_messages")
+    private Long totalInMessages = -1L;
+
+    @Column(name = "total_out_messages")
+    private Long totalOutMessages = -1L;
 
     @Column(name = "total_failed_messages")
     private Long totalFailedMessages = -1L;
@@ -55,7 +64,7 @@ public class EtlStreamExecution extends AuditableEntity implements Serializable 
     @JoinColumn(name = "ref_etl_phase_id")
     private EtlPhase etlPhase;
 
-    private EtlStreamExecution() {
+    public EtlStreamExecution() {
         super();
     }
 

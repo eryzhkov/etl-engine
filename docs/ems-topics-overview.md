@@ -20,7 +20,7 @@ The expected status message structure is:
 ```json
 {
   "info": {
-    "notification": "instance-status",
+    "type": "instance-status",
     "timestamp": date-time
   },
   "payload": {
@@ -61,7 +61,7 @@ The expected command structure is:
 ```json
 {
   "info": {
-    "command": "etl-execution-start",
+    "type": "etl-execution-start",
     "recipientInstanceId": uuid,
     "timestamp": date-time
   },
@@ -102,7 +102,7 @@ The topic is used by ETL-services to notify EMS about ETL-process execution.
 ```json
 {
   "info": {
-    "notification": "etl-execution-accepted",
+    "type": "etl-execution-accepted",
     "timestamp": date-time
   },
   "payload": {
@@ -119,7 +119,7 @@ EMS updates the *accepted_at* value in the *etl_executions* table using the info
 ```json
 {
   "info": {
-    "notification": "etl-execution-started",
+    "type": "etl-execution-started",
     "timestamp": date-time
   },
   "payload": {
@@ -136,7 +136,7 @@ EMS updates the *started_at* value in the *etl_executions* table using the infor
 ```json
 {
   "info": {
-    "notification": "etl-execution-finished",
+    "type": "etl-execution-finished",
     "timestamp": date-time
   },
   "payload": {
@@ -154,7 +154,7 @@ EMS updates the *finished_at* value in the *etl_executions* table using the info
 ```json
 {
   "info": {
-    "notification": "etl-data-stream-started",
+    "type": "etl-data-stream-started",
     "timestamp": date-time
   },
   "payload": {
@@ -173,7 +173,7 @@ EMS adds a new row to the *etl_phase_executions* table using the information fro
 ```json
 {
   "info": {
-    "notification": "etl-data-stream-finished",
+    "type": "etl-data-stream-finished",
     "timestamp": date-time
   },
   "payload": {
@@ -187,23 +187,12 @@ EMS adds a new row to the *etl_phase_executions* table using the information fro
 
 EMS updates the *stream_finished_at* value of the row in the *etl_phase_executions* table using the information from the notification.
 
-## The ems.stats topic
-
-**Producer**: all ETL-service instances except ETL Management Service (EMS).
-
-**Consumer**: EMS.
-
-**Message format**: JSON.
-
-**Partitions**: 1
-
-**Message retention time (ms)**: 180000 (180 sec)
-
-The topic is used to collect statistics during an ETL-execution.
+### The 'ETL data stream stats' notification
 
 ```json
 {
   "info": {
+    "type": "etl-data-stream-stats",
     "timestamp": date-time
   },
   "payload": {
@@ -211,11 +200,11 @@ The topic is used to collect statistics during an ETL-execution.
     "phase": "data-extract|structure-transform|data-transform|data-load",
     "dataStreamName": string,
     "instanceId": uuid,
-    "totalReadMessages": integer,
-    "totalWrittenMessages": integer,
+    "totalInMessages": integer,
+    "totalOutMessages": integer,
     "totalFailedMessages": integer
   }
 }
 ```
 
-The message should be sent when a processing of a data-stream is finished. Up to the moment all stats should be kept by ETL-service in memory.
+The message should be sent right before a processing of a data-stream is finished. Up to the moment all stats should be kept by ETL-service in memory.
