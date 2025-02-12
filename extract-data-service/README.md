@@ -21,3 +21,13 @@ The configuration parameters to manage reporting are:
 - eds.status-reporting.initial-delay-ms - initial delay before status reporting starts,
 - eds.status-reporting.fixed-rate-ms - the rate of the status reporting.
 
+### Run the ETL-execution
+
+EDS consumes commands from the *ems.control* topic and runs ETL-execution using information from the command.
+
+Using the information, EDS requests the ETL-configurations and creates ETL-extractor to extract data from the external system 
+pointed out the in the configuration.
+
+During all these steps EDS notifies EMS about ETL-execution changes and extracting data from the external system.
+
+Right now, there are no any fully implemented ETL-extractors. There is one that provides just an empty data.
