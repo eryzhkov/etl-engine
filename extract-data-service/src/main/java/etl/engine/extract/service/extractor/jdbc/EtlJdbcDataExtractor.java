@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import etl.engine.extract.exception.EtlExtractDataException;
 import etl.engine.extract.model.EtlStreamData;
 import etl.engine.extract.service.extractor.EtlDataExtractor;
@@ -14,9 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Set;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The class implements an extraction logic for the JDBC-datasource.
@@ -84,42 +90,72 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
 
             long totalIn = 0;
             long totalFailed = 0;
-            Set<String> columnsNames = dataStreamConfig.getMappings().keySet();
+
+            Map<String, MappingRule> mappingRuleMap = dataStreamConfig.getMappings();
+
             ResultSet rs = query.executeQuery();
+            ResultSetMetaData resultSetMetaData = rs.getMetaData();
+            int totalColumns = resultSetMetaData.getColumnCount();
+            List<JsonNode> extractedObjects = new ArrayList<>();
+
+            log.debug("Iterates over the result set to extract data.");
             while (rs.next()) {
+
+                ObjectNode extractedObject = mapper.createObjectNode();
+
                 boolean isRowOk = false;
-                for(String column : columnsNames) {
-                    MappingRule mappingRule = dataStreamConfig.getMappings().get(column);
-                    if (MappingRule.INTEGER_TYPE.equalsIgnoreCase(mappingRule.getType())) {
-                        log.debug("{} = {}", column, rs.getInt(column));
-                        isRowOk = true;
-                    } else if (MappingRule.STRING_TYPE.equalsIgnoreCase(mappingRule.getType())) {
-                        log.debug("{} = {}", column, rs.getString(column));
-                        isRowOk = true;
+                for(int index = 1; index <= totalColumns; index++) {
+                    String columnName = resultSetMetaData.getColumnName(index);
+                    MappingRule mappingRule = mappingRuleMap.get(columnName);
+                    if (mappingRule != null) {
+                        JDBCType returnedJdbcType = JDBCType.valueOf(resultSetMetaData.getColumnType(index));
+                        String definedColumnType = mappingRule.getType();
+
+                        if (returnedJdbcType.getName().equalsIgnoreCase(definedColumnType)) {
+                            if (MappingRule.INTEGER_TYPE.equalsIgnoreCase(mappingRule.getType())) {
+                                extractedObject.put(columnName, rs.getInt(columnName));
+                                isRowOk = true;
+                            } else if (MappingRule.STRING_TYPE.equalsIgnoreCase(mappingRule.getType())) {
+                                extractedObject.put(columnName, rs.getString(columnName));
+                                isRowOk = true;
+                            } else {
+                                //TODO Should the unsupported data type be reported somehow?
+                                log.warn("Unsupported data type found - '{}'. The row is skipped.", mappingRule.getType());
+                                isRowOk = false;
+                            }
+                        } else {
+                            //TODO The whole row should be skipped!
+                            log.warn("The column '{}' has unexpected data type: the expected '{}' but found '{}'. The row is skipped.",
+                                    columnName, definedColumnType, returnedJdbcType);
+                            isRowOk = false;
+                        }
+
                     } else {
-                        //TODO Should the unsupported data type be reported somehow?
-                        log.warn("Unsupported data type found - '{}'. The row is skipped.", mappingRule.getType());
-                        isRowOk = false;
+                        log.warn("The column '{}' was not found in the data stream configuration and is skipped.", columnName);
                     }
                 }
                 if (isRowOk) {
+                    extractedObjects.add(extractedObject);
                     totalIn++;
                 } else {
                     totalFailed++;
                 }
             }
+            log.debug("Extracted: {}", extractedObjects);
             log.debug("totalIn = {}, totalFailed = {}", totalIn, totalFailed);
+
+            ArrayNode arrayNode = mapper.createArrayNode();
+            arrayNode.addAll(extractedObjects);
+
+            return new EtlStreamData(
+                    new ByteArrayInputStream(mapper.writeValueAsBytes(arrayNode)),
+                    dataStreamConfig.getName(),
+                    totalIn,
+                    totalFailed);
 
         } catch (Exception e) {
             throw new EtlExtractDataException(e);
         }
-
-        // Just a stub implementation
-        return new EtlStreamData(
-                new ByteArrayInputStream(new byte[0]),
-                dataStreamConfig.getName(),
-                0,
-                0);
     }
 
     private String readValueAsString(JsonNode document, String path) {

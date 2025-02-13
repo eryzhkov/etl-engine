@@ -1,6 +1,8 @@
 package etl.engine.extract.service;
 
 import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.extract.exception.EtlConfigurationLoadException;
 import etl.engine.extract.exception.EtlConfigurationParseException;
 import etl.engine.extract.exception.EtlExtractDataException;
@@ -22,6 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 @Component
 @RequiredArgsConstructor
@@ -35,6 +38,7 @@ public class EtlExecutionManager {
     private final EtlExecutionInfoProvider etlExecutionInfoProvider;
     private final MessagingService messagingService;
     private final EtlExtractorFactory etlExtractorFactory;
+    private final ObjectMapper mapper;
 
     @Async("etlExecutionPool")
     public void runEtlExecution(EmsMessageEtlExecutionStartPayload commandPayload) {
@@ -80,12 +84,27 @@ public class EtlExecutionManager {
                 Collection<DataStreamInfo> dataStreamInfos = etlExecutionInfo.getDataStreamsInfo().values();
                 for (DataStreamInfo dataStreamInfo : dataStreamInfos) {
                     try {
+                        // Notify EMS the data stream processing is started.
+                        // TODO Notify the next service about the same!
                         messagingService.publishEtlDataStreamNotification(
                                 EmsMessageInfo.ETL_DATA_STREAM_STARTED,
                                 etlExecutionInfo.getExecutionId(),
                                 dataStreamInfo.getDataStreamName()
                         );
+
+                        // Extract data for the stream.
                         EtlStreamData etlStreamData = etlDataExtractor.extractData(dataStreamInfo.getConfig());
+                        log.debug("etlStreamData: {}", etlStreamData);
+
+                        //TODO Parse the etlStreamData, extract objects and send them to the next phase using keys!.
+                        JsonNode extractedObjects = mapper.readTree(etlStreamData.getDataStream());
+                        Iterator<JsonNode> iterator = extractedObjects.elements();
+                        long totalOutMessages = 0;
+                        while (iterator.hasNext()) {
+                            JsonNode object = iterator.next();
+                            log.debug("Extracted object found: {}", object);
+                            totalOutMessages++;
+                        }
 
                         // Send data stream's stats information to EMS.
                         EmsMessageDataStreamStatsPayload streamStatsPayload = new EmsMessageDataStreamStatsPayload(
@@ -95,11 +114,12 @@ public class EtlExecutionManager {
                                 instanceInfoManager.getInstanceId(),
                                 null,
                                 etlStreamData.getTotalIn(),
-                                0,
+                                totalOutMessages,
                                 etlStreamData.getTotalFailed()
                         );
                         messagingService.publishEtlDataStreamStats(EmsMessageInfo.ETL_DATA_STREAM_STATS, streamStatsPayload);
 
+                        // TODO Notify the next service about the same!
                         messagingService.publishEtlDataStreamNotification(
                                 EmsMessageInfo.ETL_DATA_STREAM_FINISHED,
                                 etlExecutionInfo.getExecutionId(),
@@ -118,7 +138,7 @@ public class EtlExecutionManager {
                 }
 
                 // Notify EMS the ETL-execution is finished.
-                //TODO Send the 'finished' message to the sts.data topics too!
+                //TODO Should the 'finished' message be sent to the sts.data topics too? No guarantee the message will be processed as the last one.
                 messagingService.publishEtlExecutionNotification(
                         EmsMessageInfo.ETL_EXECUTION_FINISHED,
                         etlExecutionInfo.getExecutionId());
@@ -142,6 +162,7 @@ public class EtlExecutionManager {
 
         } catch (EtlConfigurationLoadException | EtlConfigurationParseException e) {
             log.error("{}", e.getMessage(), e);
+            //TODO Should the next service be notified? I think, yes. Otherwise some stream executions will stay unfinished.
             messagingService.publishEtlExecutionNotificationWithMessage(
                     EmsMessageInfo.ETL_EXECUTION_FAILED,
                     commandPayload.getEtlExecutionId(),

@@ -18,14 +18,14 @@
       },
       "mappings": {
         "id": {
-          "type": "integer",
+          "type": "INTEGER",
           "targetAttribute": "id",
           "validator": {
             "required": true
           }
         },
         "position_name": {
-          "type": "string",
+          "type": "VARCHAR",
           "targetAttribute": "positionName",
           "validator": {
             "required": true,
@@ -33,7 +33,7 @@
           }
         },
         "position_code": {
-          "type": "string",
+          "type": "VARCHAR",
           "targetAttribute": "positionCode",
           "validator": {
             "required": true,
