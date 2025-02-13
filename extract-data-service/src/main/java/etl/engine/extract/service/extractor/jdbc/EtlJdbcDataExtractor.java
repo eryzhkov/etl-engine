@@ -1,16 +1,19 @@
 package etl.engine.extract.service.extractor.jdbc;
 
 import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.extract.exception.EtlExtractDataException;
 import etl.engine.extract.model.EtlStreamData;
 import etl.engine.extract.service.extractor.EtlDataExtractor;
+import etl.engine.extract.service.extractor.jdbc.model.DataStreamConfig;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 /**
  * The class implements an extraction logic for the JDBC-datasource.
@@ -25,6 +28,7 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
     private final static String DATABASE_PTR = "/config/database";
     private final static String USER_PTR = "/config/user";
     private final static String PASSWORD_PTR = "/config/password";
+    @Deprecated
     private final static String DATA_STREAM_NAME_PTR = "/name";
 
     private final String databaseType;
@@ -34,6 +38,7 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
     private final String userName;
     private final String userPassword;
 
+    private final ObjectMapper mapper;
     private final EtlJdbcDataSource dataSource;
 
     /**
@@ -54,14 +59,24 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
                 databaseName,
                 userName,
                 userPassword);
+        mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
     }
 
     @Override
-    public EtlStreamData extractData(JsonNode dataStreamConfig) throws EtlExtractDataException {
+    public EtlStreamData extractData(JsonNode dataStreamDefinition) throws EtlExtractDataException {
+
+        DataStreamConfig dataStreamConfig;
+        try {
+            dataStreamConfig = mapper.treeToValue(dataStreamDefinition, DataStreamConfig.class);
+        } catch (JsonProcessingException e) {
+            throw new EtlExtractDataException(e);
+        }
+        log.debug("Parsed data stream config: {}", dataStreamConfig);
 
         try (
                 Connection connection = dataSource.getConnection();
-                Statement query = connection.createStatement();
+                PreparedStatement query = connection.prepareStatement(dataStreamConfig.getQuery().getSql());
             ) {
 
             // The stub ETL-configuration should contain a valid database credentials!
@@ -74,7 +89,7 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
         // Just a stub implementation
         return new EtlStreamData(
                 new ByteArrayInputStream(new byte[0]),
-                readValueAsString(dataStreamConfig, DATA_STREAM_NAME_PTR),
+                dataStreamConfig.getName(),
                 0,
                 0);
     }

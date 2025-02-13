@@ -14,39 +14,32 @@
     {
       "name": "positions-stream-1",
       "query": {
-        "sql": "select id, position_name, position_code from ext.positions where updated_at > :last_run_at",
-        "parameters": []
+        "sql": "select id, position_name, position_code from ext.positions"
       },
-      "parser": {
-        "type": "jdbc",
-        "mappings": [
-          {
-            "column": "id",
-            "type": "integer",
-            "validator": {
-              "required": true
-            },
-            "targetAttribute": "id"
-          },
-          {
-            "column": "position_name",
-            "type": "string",
-            "validator": {
-              "required": true,
-              "maxLength": 100
-            },
-            "targetAttribute": "positionName"
-          },
-          {
-            "column": "position_code",
-            "type": "string",
-            "validator": {
-              "required": true,
-              "maxLength": 10
-            },
-            "targetAttribute": "positionCode"
+      "mappings": {
+        "id": {
+          "type": "integer",
+          "targetAttribute": "id",
+          "validator": {
+            "required": true
           }
-        ]
+        },
+        "position_name": {
+          "type": "string",
+          "targetAttribute": "positionName",
+          "validator": {
+            "required": true,
+            "maxLength": 100
+          }
+        },
+        "position_code": {
+          "type": "string",
+          "targetAttribute": "positionCode",
+          "validator": {
+            "required": true,
+            "maxLength": 10
+          }
+        }
       }
     }
   ]
