@@ -8,12 +8,15 @@ import etl.engine.extract.exception.EtlExtractDataException;
 import etl.engine.extract.model.EtlStreamData;
 import etl.engine.extract.service.extractor.EtlDataExtractor;
 import etl.engine.extract.service.extractor.jdbc.model.DataStreamConfig;
+import etl.engine.extract.service.extractor.jdbc.model.MappingRule;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Set;
 
 /**
  * The class implements an extraction logic for the JDBC-datasource.
@@ -79,8 +82,33 @@ public class EtlJdbcDataExtractor implements EtlDataExtractor, AutoCloseable {
                 PreparedStatement query = connection.prepareStatement(dataStreamConfig.getQuery().getSql());
             ) {
 
-            // The stub ETL-configuration should contain a valid database credentials!
-            log.info("Initialise and execute the query...");
+            long totalIn = 0;
+            long totalFailed = 0;
+            Set<String> columnsNames = dataStreamConfig.getMappings().keySet();
+            ResultSet rs = query.executeQuery();
+            while (rs.next()) {
+                boolean isRowOk = false;
+                for(String column : columnsNames) {
+                    MappingRule mappingRule = dataStreamConfig.getMappings().get(column);
+                    if (MappingRule.INTEGER_TYPE.equalsIgnoreCase(mappingRule.getType())) {
+                        log.debug("{} = {}", column, rs.getInt(column));
+                        isRowOk = true;
+                    } else if (MappingRule.STRING_TYPE.equalsIgnoreCase(mappingRule.getType())) {
+                        log.debug("{} = {}", column, rs.getString(column));
+                        isRowOk = true;
+                    } else {
+                        //TODO Should the unsupported data type be reported somehow?
+                        log.warn("Unsupported data type found - '{}'. The row is skipped.", mappingRule.getType());
+                        isRowOk = false;
+                    }
+                }
+                if (isRowOk) {
+                    totalIn++;
+                } else {
+                    totalFailed++;
+                }
+            }
+            log.debug("totalIn = {}, totalFailed = {}", totalIn, totalFailed);
 
         } catch (Exception e) {
             throw new EtlExtractDataException(e);

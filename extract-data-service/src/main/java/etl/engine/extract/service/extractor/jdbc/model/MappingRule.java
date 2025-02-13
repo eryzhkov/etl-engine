@@ -10,6 +10,9 @@ import lombok.ToString;
 @ToString
 public class MappingRule {
 
+    public final static String INTEGER_TYPE = "integer";
+    public final static String STRING_TYPE = "string";
+
     private final String type;
     private final String targetAttribute;
     private final Validator validator;
