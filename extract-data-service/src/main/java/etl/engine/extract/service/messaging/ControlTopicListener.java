@@ -49,6 +49,8 @@ public class ControlTopicListener {
                     JsonNode payloadNode = document.at(payloadPtr);
                     EmsMessageEtlExecutionStartPayload command = mapper.treeToValue(payloadNode, EmsMessageEtlExecutionStartPayload.class);
                     log.debug("Extracted command payload: {}", command);
+                    //TODO Check before if we already run ETL-execution...
+                    //TODO The more general question is how many ETL-executions can be run in parallel?
                     etlExecutionManager.runEtlExecution(command);
                 } else {
                     log.warn("The unknown command was found - '{}'. The messages is ignored.", commandType);

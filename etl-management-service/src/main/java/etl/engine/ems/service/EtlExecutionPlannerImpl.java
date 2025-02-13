@@ -44,6 +44,8 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
     public EtlExecutionDto createEtlProcessExecution(UUID etlProcessId) throws EntityNotFoundException {
         log.debug("Try to start ETL-process with the id='{}'.", etlProcessId);
 
+        //TODO Check if the ETL-process is already running (how many executions are permitted?).
+        //TODO Check the possibility to run ETL-process (may be it's not active/blocked/deleted).
         EtlInstanceDto etlInstanceDto = etlInstanceService.getFreeDataExtractorInstance();
 
         EtlExecutionStatus scheduledStatus = etlExecutionStatusRepository
@@ -66,6 +68,7 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
         log.debug("ETL-execution was created: {}", createdEtlExecution);
 
         // Notify the found ETL-service instance about the new ETL-execution
+        //TODO The EDS should be also notified about the last successful run date-time!
         EtlExecutionStartCommandPayload payload = EtlExecutionStartCommandPayload
                 .builder()
                 .etlExecutionId(createdEtlExecution.getId())
