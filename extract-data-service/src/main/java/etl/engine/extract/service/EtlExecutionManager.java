@@ -40,7 +40,7 @@ public class EtlExecutionManager {
     private final EtlExtractorFactory etlExtractorFactory;
     private final ObjectMapper mapper;
 
-    @Async("etlExecutionPool")
+    @Async("etlThreadAsyncPool")
     public void runEtlExecution(EmsMessageEtlExecutionStartPayload commandPayload) {
         log.debug("Start ETL-execution for the command {}", commandPayload);
         try {

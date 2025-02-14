@@ -25,6 +25,7 @@ public class InstanceStatusReporter {
     private final MessagingService messagingService;
 
     @Scheduled(
+            scheduler = "etlThreadSchedulerPool",
             initialDelayString = "${eds.status-reporting.initial-delay-ms}",
             fixedRateString = "${eds.status-reporting.fixed-rate-ms}")
     public void report() {
