@@ -37,6 +37,7 @@ public class EtlInstanceStatusUpdater {
     private final EtlInstanceRepository etlInstanceRepository;
 
     @Scheduled(
+            scheduler = "etlThreadSchedulerPool",
             initialDelayString = "${ems.monitoring.initial-delay-ms}",
             fixedRateString = "${ems.monitoring.fixed-rate-ms}"
     )
