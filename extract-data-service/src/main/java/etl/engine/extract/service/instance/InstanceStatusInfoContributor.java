@@ -15,12 +15,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InstanceStatusInfoContributor implements InfoContributor {
 
-    private final InstanceStatus instanceStatus;
+    private final InstanceInfoManager instanceInfoManager;
 
     @Override
     public void contribute(Builder builder) {
-        Map<String, String> instanceInfo = new LinkedHashMap<>();
-        instanceInfo.put("instanceId", instanceStatus.getInstanceId().toString());
+        Map<String, Object> instanceInfo = new LinkedHashMap<>();
+        instanceInfo.put("instanceId", instanceInfoManager.getInstanceId().toString());
+        instanceInfo.put("workload", instanceInfoManager.getWorkload());
         builder.withDetail("eds", instanceInfo);
     }
 }

@@ -1,6 +1,7 @@
 package etl.engine.ems.controller;
 
 import etl.engine.ems.model.ResponseSingleDto;
+import etl.engine.ems.model.ResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
       log.debug("Got exception: request='{}', error='{}'", request, ex.getMessage());
       log.error("{}", ex.getMessage(), ex);
       final ResponseSingleDto<Object> body = new ResponseSingleDto<>(
-              "error",
+              ResponseStatus.error,
               ex.getMessage(),
               null);
       return ResponseEntity

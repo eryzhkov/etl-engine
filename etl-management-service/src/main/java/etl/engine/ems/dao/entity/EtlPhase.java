@@ -21,6 +21,11 @@ import java.util.Objects;
 @ToString(callSuper = true)
 public class EtlPhase extends AuditableEntity implements Serializable {
 
+    public final static String EXTRACT_DATA = "data-extract";
+    public final static String STRUCTURE_TRANSFORM = "structure-transform";
+    public final static String DATA_TRANSFORM = "data-transform";
+    public final static String DATA_LOAD = "data-load";
+
     @Id
     private Integer id;
 

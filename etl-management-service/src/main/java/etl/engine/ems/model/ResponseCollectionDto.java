@@ -15,7 +15,7 @@ public class ResponseCollectionDto<T> extends ResponseDto {
 
     private final List<T> payload;
 
-    public ResponseCollectionDto(String status, String description, List<T> payload) {
+    public ResponseCollectionDto(ResponseStatus status, String description, List<T> payload) {
         super(status, description);
         this.payload = payload;
     }

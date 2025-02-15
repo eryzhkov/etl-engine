@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="20250201-03" author="eryzhkov">
+    <createTable tableName="etl_streams_executions" remarks="ETL-process streams executions.">
+      <column name="id" type="java.util.UUID" remarks="The unique identifier.">
+        <constraints primaryKey="true" primaryKeyName="pk_etl_streams_executions" nullable="false"/>
+      </column>
+      <column name="ref_etl_execution_id" type="java.util.UUID" remarks="The reference to the ETL-process execution.">
+        <constraints foreignKeyName="fk_etl_streams_executions_ref_etl_process_id" nullable="false" referencedTableName="etl_executions" referencedColumnNames="id"/>
+      </column>
+      <column name="ref_etl_phase_id" type="integer" remarks="The reference to the ETL-phase.">
+        <constraints foreignKeyName="fk_etl_streams_executions_ref_etl_phase_id" nullable="false" referencedTableName="etl_phases" referencedColumnNames="id"/>
+      </column>
+      <column name="service_instance_id" type="java.util.UUID" remarks="The identifier to the ETL-service instance where the ETL-phase was started/finished.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_streams_executions_service_instance_id"/>
+      </column>
+      <column name="stream_name" type="varchar(100)" remarks="The data stream name of the ETL-process.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_streams_executions_stream_name"/>
+      </column>
+      <column name="stream_started_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was started by the ETL-service."/>
+      <column name="stream_finished_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was finished by the ETL-service."/>
+      <column name="stream_failed_at" type="timestamptz" remarks="The date-time when the data stream in the ETL-phase was failed by the ETL-service."/>
+      <column name="comment" type="text" remarks="Free text comment."/>
+      <column name="total_in_messages" type="java.lang.Long" defaultValue="-1" remarks="Total successfully read messages in the ETL-phase."/>
+      <column name="total_out_messages" type="java.lang.Long" defaultValue="-1" remarks="Total successfully written messages in the ETL-phase."/>
+      <column name="total_failed_messages" type="java.lang.Long" defaultValue="-1" remarks="Total failed messages in the ETL-phase."/>
+      <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
+        <constraints notNullConstraintName="nn_etl_streams_executions_created_at" nullable="false"/>
+      </column>
+      <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
+        <constraints notNullConstraintName="nn_etl_streams_executions_updated_at" nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

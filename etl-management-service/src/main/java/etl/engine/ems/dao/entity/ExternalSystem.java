@@ -2,6 +2,8 @@ package etl.engine.ems.dao.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -21,12 +23,13 @@ import java.util.UUID;
 public class ExternalSystem extends AuditableEntity implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "description")
@@ -34,7 +37,6 @@ public class ExternalSystem extends AuditableEntity implements Serializable {
 
     public ExternalSystem() {
         super();
-        this.id = UUID.randomUUID();
     }
 
 

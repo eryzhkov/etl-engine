@@ -2,6 +2,8 @@ package etl.engine.ems.dao.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,12 +25,13 @@ import java.util.UUID;
 public class EtlProcess extends AuditableEntity implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "description")
@@ -37,6 +40,10 @@ public class EtlProcess extends AuditableEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "ref_external_system_id")
     private ExternalSystem externalSystem;
+
+    public EtlProcess() {
+        super();
+    }
 
     @Override
     public final boolean equals(Object o) {

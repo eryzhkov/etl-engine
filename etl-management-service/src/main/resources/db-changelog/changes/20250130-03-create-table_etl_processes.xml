@@ -21,10 +21,10 @@
         <constraints foreignKeyName="fk_etl_processes_ref_external_system_id" nullable="false" referencedTableName="external_systems" referencedColumnNames="id"/>
       </column>
       <column name="created_at" type="timestamptz" remarks="The datetime when the row was created.">
-        <constraints notNullConstraintName="nn_external_systems_created_at" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_processes_created_at" nullable="false"/>
       </column>
       <column name="updated_at" type="timestamptz" remarks="The datetime when the row was last time updated.">
-        <constraints notNullConstraintName="nn_external_systems_updated_at" nullable="false"/>
+        <constraints notNullConstraintName="nn_etl_processes_updated_at" nullable="false"/>
       </column>
     </createTable>
   </changeSet>

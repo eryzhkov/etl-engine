@@ -8,11 +8,11 @@ import java.time.OffsetDateTime;
 @Getter
 @ToString
 public class ResponseInfo {
-    private final String status;
+    private final ResponseStatus status;
     private final OffsetDateTime timestamp;
     private final String description;
 
-    public ResponseInfo(String status, String description) {
+    public ResponseInfo(ResponseStatus status, String description) {
         this.status = status;
         this.timestamp = OffsetDateTime.now();
         this.description = description;
