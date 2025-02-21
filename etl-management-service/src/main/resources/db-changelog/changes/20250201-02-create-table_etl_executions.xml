@@ -13,6 +13,9 @@
       <column name="ref_etl_process_id" type="java.util.UUID" remarks="The reference to the ETL-process.">
         <constraints nullable="false" foreignKeyName="fk_etl_executions_ref_etl_process_id" referencedTableName="etl_processes" referencedColumnNames="id"/>
       </column>
+      <column name="etl_worker" type="java.util.UUID" remarks="The identifier to the ETL-Worker instance where the ETL-execution is being processed.">
+        <constraints nullable="false" notNullConstraintName="nn_etl_executions_service_instance_id"/>
+      </column>
       <column name="assigned_at" type="timestamptz" remarks="The date-time when the execution command was sent to the ETL-Worker."/>
       <column name="accepted_at" type="timestamptz" remarks="The date-time when the ETL-process execution was accepted by the ETL-Worker."/>
       <column name="started_at" type="timestamptz" remarks="The date-time when the ETL-process was started by ETL-Worker."/>
