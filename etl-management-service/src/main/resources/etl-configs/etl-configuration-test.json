@@ -1,0 +1,92 @@
+{
+  "info": {
+    "type": "etl-configuration",
+    "name": "ETL / Extract Persons"
+  },
+  "external-data-source": {
+    "type": "jdbc",
+    "config": {
+      "databaseType": "postgresql",
+      "host": "etl-postgres-db",
+      "port": 5432,
+      "database": "etl",
+      "user": "etl",
+      "password": "etl",
+      "poolSize": 2
+    }
+  },
+  "internal-data-source": {
+    "type": "jdbc",
+    "config": {
+      "databaseType": "postgresql",
+      "host": "etl-postgres-db",
+      "port": 5432,
+      "database": "etl",
+      "user": "etl",
+      "password": "etl"
+    }
+  },
+  "streams": {
+    "data-stream-01": {
+      "extract": {
+        "query": {
+          "text": "select id, first_name, last_name, birth_date from persons",
+          "parameters": []
+        },
+        "validators": {
+          "id": {
+            "type": "integer",
+            "required": true
+          },
+          "first_name": {
+            "type": "varchar",
+            "required": true,
+            "size": 50
+          },
+          "last_name": {
+            "type": "varchar",
+            "required": true,
+            "size": 50
+          },
+          "birth_date": {
+            "type": "date",
+            "required": true
+          }
+        }
+      },
+      "transform": {
+        "jolt": [
+          {
+            "operation": "shift",
+            "spec": {
+              "id": "id",
+              "first_name": "firstName",
+              "last_name": "lastName",
+              "birth_date": "birthDate"
+            }
+          }
+        ],
+        "data-mappings": []
+      },
+      "load": {
+        "schema": "target",
+        "tables": {
+          "ref_persons": {
+            "id": {
+              "column": "external_id"
+            },
+            "firstName": {
+              "column": "first_name"
+            },
+            "lastName": {
+              "column": "last_name"
+            },
+            "birthDate": {
+              "column": "birth_date"
+            }
+          }
+        }
+      }
+    }
+  }
+}
