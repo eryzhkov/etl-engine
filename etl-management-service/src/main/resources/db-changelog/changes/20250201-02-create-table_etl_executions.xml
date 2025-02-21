@@ -13,10 +13,10 @@
       <column name="ref_etl_process_id" type="java.util.UUID" remarks="The reference to the ETL-process.">
         <constraints nullable="false" foreignKeyName="fk_etl_executions_ref_etl_process_id" referencedTableName="etl_processes" referencedColumnNames="id"/>
       </column>
-      <column name="scheduled_at" type="timestamptz" remarks="The date-time when the execution command was sent to the ETL-service."/>
-      <column name="accepted_at" type="timestamptz" remarks="The date-time when the ETL-process execution was accepted by the ETL-service."/>
-      <column name="started_at" type="timestamptz" remarks="The date-time when the ETL-process was started by ETL-service."/>
-      <column name="finished_at" type="timestamptz" remarks="The date-time when the ETL-process was finished by the ETL-service."/>
+      <column name="assigned_at" type="timestamptz" remarks="The date-time when the execution command was sent to the ETL-Worker."/>
+      <column name="accepted_at" type="timestamptz" remarks="The date-time when the ETL-process execution was accepted by the ETL-Worker."/>
+      <column name="started_at" type="timestamptz" remarks="The date-time when the ETL-process was started by ETL-Worker."/>
+      <column name="finished_at" type="timestamptz" remarks="The date-time when the ETL-process was finished by the ETL-Worker."/>
       <column name="ref_etl_execution_status_id" type="integer" remarks="The reference to the execution status.">
         <constraints foreignKeyName="fk_etl_executions_ref_etl_execution_status_id" referencedTableName="etl_execution_statuses" referencedColumnNames="id"/>
       </column>

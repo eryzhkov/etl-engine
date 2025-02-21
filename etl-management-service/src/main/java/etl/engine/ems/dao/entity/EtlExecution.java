@@ -29,8 +29,8 @@ public class EtlExecution extends AuditableEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "scheduled_at")
-    private OffsetDateTime scheduledAt;
+    @Column(name = "assigned_at")
+    private OffsetDateTime assignedAt;
 
     @Column(name = "accepted_at")
     private OffsetDateTime acceptedAt;
