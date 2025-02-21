@@ -49,10 +49,10 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
         //TODO Check the possibility to run ETL-process (may be it's not active/blocked/deleted).
         EtlInstanceDto etlInstanceDto = etlInstanceService.getFreeDataExtractorInstance();
 
-        EtlExecutionStatus scheduledStatus = etlExecutionStatusRepository
-                .findEtlExecutionStatusByName(EtlExecutionStatus.SCHEDULED)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'SCHEDULED' was not found in the repository!"));
-        log.debug("The status 'SCHEDULED' was found in the repository");
+        EtlExecutionStatus assignedStatus = etlExecutionStatusRepository
+                .findEtlExecutionStatusByName(EtlExecutionStatus.ASSIGNED)
+                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'ASSIGNED' was not found in the repository!"));
+        log.debug("The status 'ASSIGNED' was found in the repository");
 
         EtlProcess etlProcessToBeRun = etlProcessRepository
                 .findById(etlProcessId)
@@ -63,7 +63,7 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
 
         EtlExecution etlExecution = new EtlExecution();
         etlExecution.setEtlProcess(etlProcessToBeRun);
-        etlExecution.setStatus(scheduledStatus);
+        etlExecution.setStatus(assignedStatus);
         etlExecution.setScheduledAt(OffsetDateTime.now());
         EtlExecution createdEtlExecution = etlExecutionRepository.save(etlExecution);
         log.debug("ETL-execution was created: {}", createdEtlExecution);

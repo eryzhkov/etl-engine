@@ -26,7 +26,7 @@
 
     <insert tableName="etl_execution_statuses">
       <column name="id" value="1"/>
-      <column name="name" value="SCHEDULED"/>
+      <column name="name" value="ASSIGNED"/>
       <column name="description" value="The ETL-execution was published to the EMS management topic."/>
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
@@ -34,28 +34,28 @@
     <insert tableName="etl_execution_statuses">
       <column name="id" value="2"/>
       <column name="name" value="ACCEPTED"/>
-      <column name="description" value="The ETL-execution was accepted by the ETL-service of the data-extract type."/>
+      <column name="description" value="The ETL-execution was accepted by the ETL-Worker."/>
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
     </insert>
     <insert tableName="etl_execution_statuses">
       <column name="id" value="3"/>
       <column name="name" value="RUNNING"/>
-      <column name="description" value="The ETL-execution was run by the ETL-service of the data-extract type."/>
+      <column name="description" value="The ETL-execution was run by the ETL-Worker."/>
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
     </insert>
     <insert tableName="etl_execution_statuses">
       <column name="id" value="4"/>
       <column name="name" value="FINISHED"/>
-      <column name="description" value="The ETL-execution was finished by the ETL-service of the data-load type."/>
+      <column name="description" value="The ETL-execution was finished by the ETL-Worker."/>
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
     </insert>
     <insert tableName="etl_execution_statuses">
       <column name="id" value="5"/>
       <column name="name" value="FAILED"/>
-      <column name="description" value="The ETL-execution was failed by the ETL-service."/>
+      <column name="description" value="The ETL-execution was failed by the ETL-Worker."/>
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
     </insert>
