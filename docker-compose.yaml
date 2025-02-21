@@ -29,6 +29,28 @@ services:
       start_period: 30s
       retries: 5
 
+  etl-worker:
+    image: etl-worker:latest
+    build: etl-worker
+    container_name: etl-worker
+    restart: "no"
+    environment:
+      - EWS_KAFKA_BOOTSTRAP_SERVERS=etl-kafka:9092
+      - EWS_KAFKA_TOPICS_HEARTBEAT=ems.heartbeat
+      - EWS_KAFKA_TOPICS_CONTROL=ems.control
+      - EWS_KAFKA_TOPICS_PROGRESS=ems.progress
+      - EWS_STATUS_REPORTING_ENABLED=true
+      - EWS_STATUS_REPORTING_INITIAL_DELAY_MS=5000
+      - EWS_STATUS_REPORTING_FIXED_RATE_MS=10000
+    ports:
+      - "8082:8080"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+
   extract-data-service:
     image: extract-data-service:latest
     build: extract-data-service
@@ -39,7 +61,7 @@ services:
       - EDS_KAFKA_TOPICS_HEARTBEAT=ems.heartbeat
       - EDS_KAFKA_TOPICS_CONTROL=ems.control
       - EDS_KAFKA_TOPICS_PROGRESS=ems.progress
-      - EDS_STATUS_REPORTING_ENABLED=true
+      - EDS_STATUS_REPORTING_ENABLED=false
       - EDS_STATUS_REPORTING_INITIAL_DELAY_MS=5000
       - EDS_STATUS_REPORTING_FIXED_RATE_MS=10000
       - EDS_EMS_URL=http://etl-ems:8080

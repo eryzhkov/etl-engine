@@ -52,6 +52,7 @@
   <modules>
     <module>etl-management-service</module>
     <module>extract-data-service</module>
+    <module>etl-worker</module>
   </modules>
 
   <properties>
