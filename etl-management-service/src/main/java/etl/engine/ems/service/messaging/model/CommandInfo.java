@@ -10,15 +10,15 @@ import java.util.UUID;
 @ToString
 public class CommandInfo {
 
-    public static final String ETL_EXECUTION_START = "etl-execution-start";
+    public static final String ETL_EXECUTION_ASSIGN = "etl-execution-assign";
 
     private final String command;
-    private final UUID recipientInstanceId;
+    private final UUID assignee;
     private final OffsetDateTime timestamp;
 
-    public CommandInfo(String command, UUID recipientInstanceId) {
+    public CommandInfo(String command, UUID assignee) {
         this.command = command;
-        this.recipientInstanceId = recipientInstanceId;
+        this.assignee = assignee;
         this.timestamp = OffsetDateTime.now();
     }
 }

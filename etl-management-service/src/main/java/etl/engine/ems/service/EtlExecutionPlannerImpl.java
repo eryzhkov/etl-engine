@@ -12,7 +12,7 @@ import etl.engine.ems.model.EtlExecutionDto;
 import etl.engine.ems.model.EtlInstanceDto;
 import etl.engine.ems.service.messaging.model.CommandInfo;
 import etl.engine.ems.service.messaging.model.EtlCommand;
-import etl.engine.ems.service.messaging.model.EtlExecutionStartCommandPayload;
+import etl.engine.ems.service.messaging.model.EtlExecutionAssignCommandPayload;
 import etl.engine.ems.service.monitoring.instance.EtlInstanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
 
     @Transactional(rollbackFor = {EntityNotFoundException.class})
     @Override
-    public EtlExecutionDto createEtlProcessExecution(UUID etlProcessId) throws EntityNotFoundException {
+    public EtlExecutionDto createEtlProcessExecution(UUID etlProcessId) throws EntityNotFoundException, IOException {
         log.debug("Try to start ETL-process with the id='{}'.", etlProcessId);
 
         //TODO Check if the ETL-process is already running (how many executions are permitted?).
@@ -69,20 +70,19 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
 
         // Notify the found ETL-service instance about the new ETL-execution
         //TODO The EDS should be also notified about the last successful run date-time!
-        EtlExecutionStartCommandPayload payload = EtlExecutionStartCommandPayload
+        EtlExecutionAssignCommandPayload payload = EtlExecutionAssignCommandPayload
                 .builder()
                 .etlExecutionId(createdEtlExecution.getId())
-                .externalSystemCode(etlProcessToBeRun.getExternalSystem().getCode())
-                .etlProcessCode(etlProcessToBeRun.getCode())
+                .configuration(StubEtlConfigurationProvider.getStubEtlConfiguration())
                 .build();
-        EtlCommand<EtlExecutionStartCommandPayload> etlStartCommand = new EtlCommand<>(
-                CommandInfo.ETL_EXECUTION_START,
+        EtlCommand<EtlExecutionAssignCommandPayload> etlStartCommand = new EtlCommand<>(
+                CommandInfo.ETL_EXECUTION_ASSIGN,
                 etlInstanceDto.getId(),
                 payload
         );
-        log.debug("The 'etl-execution-start' command to be published: {}", etlStartCommand);
+        log.debug("The 'etl-execution-assign' command to be published: {}", etlStartCommand);
         kafkaTemplate.send(controlTopicName, etlStartCommand);
-        log.debug("The command 'etl-execution-start' was published.");
+        log.debug("The 'etl-execution-assign' command was published.");
         return etlExecutionMapper.toEtlExecutionDto(createdEtlExecution);
     }
 }
