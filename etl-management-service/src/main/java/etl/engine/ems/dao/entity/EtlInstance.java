@@ -27,9 +27,6 @@ public class EtlInstance extends AuditableEntity implements Serializable {
     @Column(name = "instance_id")
     private UUID id;
 
-    @Column(name = "instance_type", nullable = false)
-    private String instanceType;
-
     @Column(name = "instance_state", nullable = false)
     private String instanceState;
 

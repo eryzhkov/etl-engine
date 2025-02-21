@@ -6,7 +6,6 @@ import etl.engine.ems.dao.repository.EtlInstanceRepository;
 import etl.engine.ems.exception.EntityNotFoundException;
 import etl.engine.ems.mapper.EtlInstanceMapper;
 import etl.engine.ems.model.EtlInstanceDto;
-import etl.engine.ems.model.EtlServiceType;
 import etl.engine.ems.model.InstanceStatusReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,6 @@ public class EtlInstanceService {
     public void saveInstanceStatusReport(InstanceStatusReport report) {
         EtlInstance entity = new EtlInstance();
         entity.setId(report.getInstanceId());
-        entity.setInstanceType(report.getInstanceType());
         entity.setInstanceState(report.getInstanceState());
         entity.setReportedAt(report.getReportedAt());
         entity.setStatus(ServiceStatus.online);
@@ -36,10 +34,9 @@ public class EtlInstanceService {
 
     public EtlInstanceDto getFreeDataExtractorInstance() throws EntityNotFoundException {
         EtlInstance etlDataExtractorIdleInstance = etlInstanceRepository
-                .findEtlInstanceByStatusAndInstanceStateAndInstanceType(
+                .findEtlInstanceByStatusAndInstanceState(
                         ServiceStatus.online,
-                        "idle",
-                        EtlServiceType.DATA_EXTRACTOR.toString())
+                        "idle")
                 .orElseThrow(
                         () -> new EntityNotFoundException("There are no suitable ETL-service instance of the 'data-extractor' type in the 'idle' state to create an ETL execution!")
                 );
