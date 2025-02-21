@@ -22,6 +22,7 @@ import java.io.InputStream;
 @RequestMapping("/api/v1/etl-configs/0/0")
 @RequiredArgsConstructor
 @Slf4j
+@Deprecated
 public class EtlConfigStubController {
 
     private final ObjectMapper mapper;
