@@ -25,9 +25,7 @@ The expected status message structure is:
   },
   "payload": {
     "id": uuid,
-    "type": "DATA_EXTRACTOR|STRUCTURE_TRANSFORMER|DATA_TRANSFORMER|DATA_LOADER",
-    "state": "idle|busy",
-    "workload": []
+    "state": "idle|busy"
   }
 }
 ```
@@ -35,9 +33,7 @@ The expected status message structure is:
 where:
 
 - *id* is the unique ETL-service instance identifier (the random UUID value generated during instance starting up).
-- *type* is the instance type and should be one of the - DATA_EXTRACTOR, STRUCTURE_TRANSFORMER, DATA_TRANSFORMER, DATA_LOADER.
 - *state* is the instance state and should be onde of the - idle, busy.
-- *workload* is an array of the processing ETL data streams at the moment (not yet implemented!).
 - *timestamp* is the date-date when the status was generated and published.
 
 EMS updates the *etl_instances* table using the messages.
@@ -61,21 +57,22 @@ The expected command structure is:
 ```json
 {
   "info": {
-    "type": "etl-execution-start",
-    "recipientInstanceId": uuid,
+    "type": "etl-execution-assign",
+    "assignee": uuid,
     "timestamp": date-time
   },
   "payload": {
     "etlExecutionId": uuid,
-    "externalSystemCode": string,
-    "etlProcessCode": string
+    "configuration": {...}
   }
 }
 ```
 
 where:
 
-- *recipientInstanceId* is the unique identifier of the ETL-service instance of the 'DATA_EXTRACTOR' type (taken from the *etl_instances.instance_id* column).
+- *assignee* is the unique identifier of the ETL-Worker instance (taken from the *etl_instances.instance_id* column).
+- *etlExecutionId* is the unique identifier of the ETL-execution created by EMS.
+- *configuration* is the ETL-configuration for the ETL-execution.
 
 The ETL-service instance should put the needed information from the command to the preparation queue of ETL executions.
 

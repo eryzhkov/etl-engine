@@ -10,10 +10,9 @@ import java.util.UUID;
 @Builder
 @Getter
 @ToString
-public class EtlExecutionStartCommandPayload {
+public class EtlExecutionAssignCommandPayload {
 
     private UUID etlExecutionId;
-    private String externalSystemCode;
-    private String etlProcessCode;
+    private Object configuration;
 
 }
