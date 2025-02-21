@@ -22,8 +22,6 @@ public class InstanceStatusReport {
 
     @JsonProperty("id")
     private UUID instanceId;
-    @JsonProperty("type")
-    private String instanceType;
     @JsonProperty("state")
     private String instanceState;
     @JsonProperty("timestamp")

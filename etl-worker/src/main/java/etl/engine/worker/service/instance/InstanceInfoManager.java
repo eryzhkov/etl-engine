@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * The component is the holder of the instance status information. The information is published to the topic with the fixed rate.
+ * The component is the holder of the instance information.
  */
 @Component
 @Slf4j

@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface EtlInstanceRepository extends JpaRepository<EtlInstance, UUID> {
 
-    Optional<EtlInstance> findEtlInstanceByStatusAndInstanceStateAndInstanceType(ServiceStatus status, String state, String type);
+    Optional<EtlInstance> findEtlInstanceByStatusAndInstanceState(ServiceStatus status, String state);
 
 }

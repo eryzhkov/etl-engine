@@ -1,0 +1,26 @@
+package etl.engine.worker.model.messaging;
+
+import lombok.Getter;
+import lombok.ToString;
+
+import java.time.OffsetDateTime;
+
+@Getter
+@ToString
+public class Info {
+
+    public static final String INSTANCE_STATUS = "instance-status";
+    public static final String ETL_EXECUTION_ACCEPTED = "etl-execution-accepted";
+    public static final String ETL_EXECUTION_STARTED = "etl-execution-started";
+    public static final String ETL_EXECUTION_FINISHED = "etl-execution-finished";
+    public static final String ETL_EXECUTION_FAILED = "etl-execution-failed";
+
+    private final String type;
+    private final OffsetDateTime timestamp;
+
+    public Info(String type) {
+        this.type = type;
+        this.timestamp = OffsetDateTime.now();
+    }
+
+}

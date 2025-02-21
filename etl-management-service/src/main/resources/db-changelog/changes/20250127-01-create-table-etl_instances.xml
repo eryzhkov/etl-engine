@@ -10,9 +10,6 @@
       <column name="instance_id" type="java.util.UUID" remarks="The ETL-service instance unique identifier.">
         <constraints primaryKey="true" primaryKeyName="pk_etl_instances" nullable="false"/>
       </column>
-      <column name="instance_type" type="varchar(50)" remarks="The reported instance type.">
-        <constraints notNullConstraintName="nn_etl_instances_instance_type" nullable="false"/>
-      </column>
       <column name="instance_state" type="varchar(50)" remarks="The reported instance state.">
         <constraints notNullConstraintName="nn_etl_instances_reported_state" nullable="false"/>
       </column>
