@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: etl-worker-service
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+logging:
+  level:
+    root: "info"
+    org.hibernate.orm.jdbc.bind: "trace"
+    org.springframework.transaction: "debug"
+    org.springframework.kafka.transaction: "debug"
+    etl.engine.worker: "debug"
+ews:
+  kafka:
+    bootstrap-servers: "${EWS_KAFKA_BOOTSTRAP_SERVERS}"
+    topics:
+      heartbeat: "${EWS_KAFKA_TOPICS_HEARTBEAT}"
+      control: "${EWS_KAFKA_TOPICS_CONTROL}"
+      progress: "${EWS_KAFKA_TOPICS_PROGRESS}"
+    consumer:
+      group: "${spring.application.name}"
+  status-reporting:
+    enabled: "${EWS_STATUS_REPORTING_ENABLED:false}"
+    initial-delay-ms: "${EWS_STATUS_REPORTING_INITIAL_DELAY_MS}"
+    fixed-rate-ms: "${EWS_STATUS_REPORTING_FIXED_RATE_MS}"
