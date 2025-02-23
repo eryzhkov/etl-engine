@@ -64,7 +64,7 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
         EtlExecution etlExecution = new EtlExecution();
         etlExecution.setEtlProcess(etlProcessToBeRun);
         etlExecution.setStatus(assignedStatus);
-        etlExecution.setScheduledAt(OffsetDateTime.now());
+        etlExecution.setAssignedAt(OffsetDateTime.now());
         EtlExecution createdEtlExecution = etlExecutionRepository.save(etlExecution);
         log.debug("ETL-execution was created: {}", createdEtlExecution);
 
