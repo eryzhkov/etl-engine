@@ -27,7 +27,7 @@ public class InstanceInfoPublisher {
             fixedRateString = "${ews.status-reporting.fixed-rate-ms}")
     public void report() {
         if (isReportingEnabled) {
-            Info info = new Info(Info.INSTANCE_STATUS);
+            Info info = new Info(Info.HEARTBEAT);
             InstanceInfoPayload payload = new InstanceInfoPayload(
                     instanceInfoManager.getInstanceId(),
                     instanceInfoManager.getInstanceState()
