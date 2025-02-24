@@ -24,7 +24,7 @@ public class EtlExecutionService {
 
 
     @Transactional(propagation = Propagation.NESTED)
-    public void markEtlExecutionAsAcceptedAt(UUID etlExecutionId, OffsetDateTime acceptedAt)
+    public void markEtlExecutionAsAcceptedAt(UUID etlExecutionId, OffsetDateTime acceptedAt, UUID assignee)
             throws EntityNotFoundException {
         log.debug("etlExecutionId = {}, acceptedAt = {}", etlExecutionId, acceptedAt);
         EtlExecution etlExecution = etlExecutionRepository
@@ -37,9 +37,28 @@ public class EtlExecutionService {
         log.debug("The status '{}' was found in the repository", EtlExecutionStatus.ACCEPTED);
         etlExecution.setStatus(status);
         etlExecution.setAcceptedAt(acceptedAt);
+        etlExecution.setEtlWorker(assignee);
         log.debug("Updated the acceptedAt property.");
         etlExecutionRepository.save(etlExecution);
-        log.debug("Saved the entity");
+        log.debug("The entity is saved");
+    }
+
+    public void markEtlExecutionAsRejected(UUID etlExecutionId, OffsetDateTime rejectedAt)
+            throws EntityNotFoundException {
+        log.debug("etlExecutionId = {}, rejectedAt = {}", etlExecutionId, rejectedAt);
+        EtlExecution etlExecution = etlExecutionRepository
+                .findById(etlExecutionId)
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecution(etlExecutionId));
+        log.debug("Found {}", etlExecution);
+        EtlExecutionStatus status = etlExecutionStatusRepository
+                .findEtlExecutionStatusByName(EtlExecutionStatus.REJECTED)
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecutionStatus(EtlExecutionStatus.REJECTED));
+        log.debug("The status '{}' was found in the repository", EtlExecutionStatus.REJECTED);
+        etlExecution.setStatus(status);
+        etlExecution.setFinishedAt(rejectedAt);
+        log.debug("Updated the finishedAt property.");
+        etlExecutionRepository.save(etlExecution);
+        log.debug("The entity is saved");
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -55,6 +74,7 @@ public class EtlExecutionService {
         etlExecution.setStatus(status);
         etlExecution.setStartedAt(startedAt);
         etlExecutionRepository.save(etlExecution);
+        log.debug("The entity is saved");
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -70,6 +90,7 @@ public class EtlExecutionService {
         etlExecution.setStatus(status);
         etlExecution.setFinishedAt(finishedAt);
         etlExecutionRepository.save(etlExecution);
+        log.debug("The entity is saved");
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -86,6 +107,7 @@ public class EtlExecutionService {
         etlExecution.setFinishedAt(failedAt);
         etlExecution.setComment(reason);
         etlExecutionRepository.save(etlExecution);
+        log.debug("The entity is saved");
     }
 
 }

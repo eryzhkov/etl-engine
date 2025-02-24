@@ -62,7 +62,7 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
                 );
         log.debug("The ETL-process was found in the repository.");
 
-        OffsetDateTime lastRunAt = etlExecutionRepository.getLastSuccessfulExecutionTimestamp(etlProcessId)
+        OffsetDateTime lastRunAt = etlExecutionRepository.getLastSuccessfulRunAtTimestamp(etlProcessId)
                 .orElse(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC));
 
         EtlExecution etlExecution = new EtlExecution();

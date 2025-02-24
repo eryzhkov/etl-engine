@@ -15,6 +15,7 @@ public class Info {
     public static final String ETL_EXECUTION_STARTED = "etl-execution-started";
     public static final String ETL_EXECUTION_FINISHED = "etl-execution-finished";
     public static final String ETL_EXECUTION_FAILED = "etl-execution-failed";
+    public static final String ETL_EXECUTION_REJECTED = "etl-execution-rejected";
 
     private final String type;
     private final OffsetDateTime timestamp;

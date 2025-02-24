@@ -26,6 +26,7 @@ public class EtlExecutionStatus extends AuditableEntity implements Serializable 
     public final static String RUNNING = "RUNNING";
     public final static String FINISHED = "FINISHED";
     public final static String FAILED = "FAILED";
+    public final static String REJECTED = "REJECTED";
 
     @Id
     private Integer id;
