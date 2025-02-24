@@ -88,7 +88,7 @@ services:
               properties:
                 bootstrap.servers: "etl-kafka:9092"
     ports:
-      - "8082:8080"
+      - "8092:8080"
 
   etl-postgres-db:
     image: postgres:17-alpine@sha256:c4c3cded22488238ed0df51b82913b5d3b426fad19fbe205a711f05f5dba5c45

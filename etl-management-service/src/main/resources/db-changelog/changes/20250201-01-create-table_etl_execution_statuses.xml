@@ -59,6 +59,13 @@
       <column name="created_at" valueDate="${now}"/>
       <column name="updated_at" valueDate="${now}"/>
     </insert>
+    <insert tableName="etl_execution_statuses">
+      <column name="id" value="6"/>
+      <column name="name" value="REJECTED"/>
+      <column name="description" value="The ETL-execution was rejected by the ETL-Worker."/>
+      <column name="created_at" valueDate="${now}"/>
+      <column name="updated_at" valueDate="${now}"/>
+    </insert>
 
   </changeSet>
 

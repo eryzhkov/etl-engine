@@ -21,6 +21,7 @@ public class InstanceInfoContributor implements InfoContributor {
     public void contribute(Builder builder) {
         Map<String, Object> instanceInfo = new LinkedHashMap<>();
         instanceInfo.put("instanceId", instanceInfoManager.getInstanceId().toString());
+        instanceInfo.put("workload", instanceInfoManager.getWorkload());
         builder.withDetail("ews", instanceInfo);
     }
 

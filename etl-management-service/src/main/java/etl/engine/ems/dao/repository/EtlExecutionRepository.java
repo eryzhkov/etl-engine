@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface EtlExecutionRepository extends JpaRepository<EtlExecution, UUID> {
 
-    @Query(value = "select max(e.finished_at) from etl_executions e where e.ref_etl_process_id = ?1 and e.ref_etl_execution_status_id = 4", nativeQuery = true)
-    Optional<OffsetDateTime> getLastSuccessfulExecutionTimestamp(@NonNull UUID etlProcessId);
+    @Query("select max(e.startedAt) from EtlExecution e where e.etlProcess.id = ?1 and e.status.id = 4")
+    Optional<OffsetDateTime> getLastSuccessfulRunAtTimestamp(@NonNull UUID etlProcessId);
 
 }

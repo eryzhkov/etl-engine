@@ -33,17 +33,22 @@ public class ProgressTopicListener {
     public void listener(String message) {
         log.debug("The received message: {}", message);
         try {
-            JsonNode document = mapper.readTree(message);
-            String notification = document.at(JsonPointer.compile("/info/type")).asText();
-            UUID etlExecutionId = getExecutionId(document);
-            OffsetDateTime timestamp = getTimestamp(document);
+            final JsonNode document = mapper.readTree(message);
+            final String notification = document.at(JsonPointer.compile("/info/type")).asText();
+            final UUID etlExecutionId = getExecutionId(document);
+            final OffsetDateTime timestamp = getTimestamp(document);
             log.debug("Extracted notification='{}', timestamp='{}', etlExecutionId='{}'.",
                     notification, timestamp, etlExecutionId);
             if (notification != null) {
                 if (EtlNotification.ETL_EXECUTION_ACCEPTED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-accepted
-                    etlExecutionService.markEtlExecutionAsAcceptedAt(etlExecutionId, timestamp);
+                    final UUID assignee = getAssignee(document);
+                    etlExecutionService.markEtlExecutionAsAcceptedAt(etlExecutionId, timestamp, assignee);
                     log.debug("The ETL-execution with id = '{}' was accepted by the worker.", etlExecutionId);
+                } else if (EtlNotification.ETL_EXECUTION_REJECTED.equalsIgnoreCase(notification)) {
+                    // Handle etl-execution-rejected
+                    etlExecutionService.markEtlExecutionAsRejected(etlExecutionId, timestamp);
+                    log.warn("The ETL-execution with id = '{}' was rejected by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_EXECUTION_STARTED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-started
                     etlExecutionService.markEtlExecutionAsStartedAt(etlExecutionId, timestamp);
@@ -105,6 +110,11 @@ public class ProgressTopicListener {
 
     private UUID getExecutionId(JsonNode document) {
         String value = document.at(JsonPointer.compile("/payload/etlExecutionId")).asText();
+        return UUID.fromString(value);
+    }
+
+    private UUID getAssignee(JsonNode document) {
+        String value = document.at(JsonPointer.compile("/payload/assignee")).asText();
         return UUID.fromString(value);
     }
 
