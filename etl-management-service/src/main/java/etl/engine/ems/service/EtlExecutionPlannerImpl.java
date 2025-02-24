@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Component
@@ -61,27 +62,30 @@ public class EtlExecutionPlannerImpl implements EtlExecutionPlanner {
                 );
         log.debug("The ETL-process was found in the repository.");
 
+        OffsetDateTime lastRunAt = etlExecutionRepository.getLastSuccessfulExecutionTimestamp(etlProcessId)
+                .orElse(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC));
+
         EtlExecution etlExecution = new EtlExecution();
         etlExecution.setEtlProcess(etlProcessToBeRun);
         etlExecution.setStatus(assignedStatus);
         etlExecution.setAssignedAt(OffsetDateTime.now());
         EtlExecution createdEtlExecution = etlExecutionRepository.save(etlExecution);
-        log.debug("ETL-execution was created: {}", createdEtlExecution);
+        log.debug("The ETL-execution was created: {}", createdEtlExecution);
 
-        // Notify the found ETL-service instance about the new ETL-execution
-        //TODO The EDS should be also notified about the last successful run date-time!
+        // Assign the ETL-execution to the selected ETL-Worker.
         EtlExecutionAssignCommandPayload payload = EtlExecutionAssignCommandPayload
                 .builder()
                 .etlExecutionId(createdEtlExecution.getId())
+                .lastRunAt(lastRunAt)
                 .configuration(StubEtlConfigurationProvider.getStubEtlConfiguration())
                 .build();
-        EtlCommand<EtlExecutionAssignCommandPayload> etlStartCommand = new EtlCommand<>(
+        EtlCommand<EtlExecutionAssignCommandPayload> etlAssignCommand = new EtlCommand<>(
                 CommandInfo.ETL_EXECUTION_ASSIGN,
                 etlInstanceDto.getId(),
                 payload
         );
-        log.debug("The 'etl-execution-assign' command to be published: {}", etlStartCommand);
-        kafkaTemplate.send(controlTopicName, etlStartCommand);
+        log.debug("The 'etl-execution-assign' command to be published: {}", etlAssignCommand);
+        kafkaTemplate.send(controlTopicName, etlAssignCommand);
         log.debug("The 'etl-execution-assign' command was published.");
         return etlExecutionMapper.toEtlExecutionDto(createdEtlExecution);
     }
