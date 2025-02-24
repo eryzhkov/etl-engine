@@ -12,8 +12,8 @@ public class EtlCommand<T> {
     private final CommandInfo info;
     private final T payload;
 
-    public EtlCommand(String command, UUID recipientInstanceId, T payload) {
-        this.info = new CommandInfo(command, recipientInstanceId);
+    public EtlCommand(String type, UUID recipientInstanceId, T payload) {
+        this.info = new CommandInfo(type, recipientInstanceId);
         this.payload = payload;
     }
 

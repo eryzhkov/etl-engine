@@ -6,7 +6,7 @@ import etl.engine.ems.dao.repository.EtlInstanceRepository;
 import etl.engine.ems.exception.EntityNotFoundException;
 import etl.engine.ems.mapper.EtlInstanceMapper;
 import etl.engine.ems.model.EtlInstanceDto;
-import etl.engine.ems.model.InstanceStatusReport;
+import etl.engine.ems.model.EtlWorkerHeartbeat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,7 +22,7 @@ public class EtlInstanceService {
     private final EtlInstanceMapper etlInstanceMapper;
 
     @Transactional(propagation = Propagation.NESTED)
-    public void saveInstanceStatusReport(InstanceStatusReport report) {
+    public void saveInstanceStatusReport(EtlWorkerHeartbeat report) {
         EtlInstance entity = new EtlInstance();
         entity.setId(report.getInstanceId());
         entity.setInstanceState(report.getInstanceState());

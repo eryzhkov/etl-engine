@@ -1,6 +1,7 @@
 package etl.engine.worker.service.instance;
 
 import etl.engine.worker.model.InstanceState;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,11 @@ public class InstanceInfoManager {
 
     public String getInstanceState() {
         return InstanceState.idle.toString();
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        log.info("The instance ID = {}", INSTANCE_ID);
     }
 
 }

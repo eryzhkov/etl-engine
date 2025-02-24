@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EtlInstanceStatusUpdater {
+public class EtlWorkerStatusUpdater {
 
     @Value("${ems.monitoring.fixed-rate-ms}")
     private long monitoringFixedRateMs;
@@ -48,7 +48,7 @@ public class EtlInstanceStatusUpdater {
         List<EtlInstance> services = etlInstanceRepository.findAll();
         OffsetDateTime rightNow = OffsetDateTime.now();
         for (EtlInstance etlInstance : services) {
-            log.debug("Check the instance '{}'...", etlInstance.getId());
+            log.debug("Check the ETL-Worker instance '{}'...", etlInstance.getId());
             log.debug("rightNow = {}", rightNow);
             log.debug("reportedAt = {}", etlInstance.getReportedAt());
             long timeDeltaMs = Duration.between(etlInstance.getReportedAt(), rightNow).toMillis();
@@ -56,21 +56,21 @@ public class EtlInstanceStatusUpdater {
             if (timeDeltaMs > monitoringFixedRateMs && timeDeltaMs <= unknownStatusThresholdMs) {
                 etlInstance.setStatus(ServiceStatus.unknown);
                 etlInstanceRepository.save(etlInstance);
-                log.debug("For the instance '{}' the status was changed from 'online' to '{}'.",
+                log.debug("For the ETL-Worker instance '{}' the status was changed from 'online' to '{}'.",
                         etlInstance.getId(), ServiceStatus.unknown);
             }
             if (timeDeltaMs > unknownStatusThresholdMs && timeDeltaMs <= offlineStatusThresholdMs) {
                 etlInstance.setStatus(ServiceStatus.offline);
                 etlInstanceRepository.save(etlInstance);
-                log.debug("For the instance '{}' the status was changed from '{}' to '{}'.",
+                log.debug("For the ETL-Worker instance '{}' the status was changed from '{}' to '{}'.",
                         etlInstance.getId(), ServiceStatus.unknown, ServiceStatus.offline);
             }
             if (timeDeltaMs > offlineStatusThresholdMs) {
                 etlInstanceRepository.delete(etlInstance);
-                log.debug("The instance '{}' was removed from monitoring.", etlInstance.getId());
+                log.debug("The ETL-Worker instance '{}' was removed from monitoring.", etlInstance.getId());
             }
         }
-        log.debug("Service statuses were checked.");
+        log.debug("ETL-Workers statuses has been updated.");
     }
 
 }

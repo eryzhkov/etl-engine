@@ -29,12 +29,12 @@ public class EtlExecutionService {
         log.debug("etlExecutionId = {}, acceptedAt = {}", etlExecutionId, acceptedAt);
         EtlExecution etlExecution = etlExecutionRepository
                 .findById(etlExecutionId)
-                .orElseThrow(() -> new EntityNotFoundException("ETL-execution with id=" + etlExecutionId + " not found."));
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecution(etlExecutionId));
         log.debug("Found {}", etlExecution);
         EtlExecutionStatus status = etlExecutionStatusRepository
                 .findEtlExecutionStatusByName(EtlExecutionStatus.ACCEPTED)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'ACCEPTED' was not found in the repository!"));
-        log.debug("The status 'ACCEPTED' was found in the repository");
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecutionStatus(EtlExecutionStatus.ACCEPTED));
+        log.debug("The status '{}' was found in the repository", EtlExecutionStatus.ACCEPTED);
         etlExecution.setStatus(status);
         etlExecution.setAcceptedAt(acceptedAt);
         log.debug("Updated the acceptedAt property.");
@@ -47,11 +47,11 @@ public class EtlExecutionService {
             throws EntityNotFoundException {
         EtlExecution etlExecution = etlExecutionRepository
                 .findById(etlExecutionId)
-                .orElseThrow(() -> new EntityNotFoundException("ETL-execution with id=" + etlExecutionId + " not found."));
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecution(etlExecutionId));
         EtlExecutionStatus status = etlExecutionStatusRepository
                 .findEtlExecutionStatusByName(EtlExecutionStatus.RUNNING)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'RUNNING' was not found in the repository!"));
-        log.debug("The status 'RUNNING' was found in the repository");
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecutionStatus(EtlExecutionStatus.RUNNING));
+        log.debug("The status '{}' was found in the repository", EtlExecutionStatus.RUNNING);
         etlExecution.setStatus(status);
         etlExecution.setStartedAt(startedAt);
         etlExecutionRepository.save(etlExecution);
@@ -62,11 +62,11 @@ public class EtlExecutionService {
             throws EntityNotFoundException {
         EtlExecution etlExecution = etlExecutionRepository
                 .findById(etlExecutionId)
-                .orElseThrow(() -> new EntityNotFoundException("ETL-execution with id=" + etlExecutionId + " not found."));
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecution(etlExecutionId));
         EtlExecutionStatus status = etlExecutionStatusRepository
                 .findEtlExecutionStatusByName(EtlExecutionStatus.FINISHED)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'FINISHED' was not found in the repository!"));
-        log.debug("The status 'FINISHED' was found in the repository");
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecutionStatus(EtlExecutionStatus.FINISHED));
+        log.debug("The status '{}' was found in the repository", EtlExecutionStatus.FINISHED);
         etlExecution.setStatus(status);
         etlExecution.setFinishedAt(finishedAt);
         etlExecutionRepository.save(etlExecution);
@@ -77,11 +77,11 @@ public class EtlExecutionService {
             throws EntityNotFoundException {
         EtlExecution etlExecution = etlExecutionRepository
                 .findById(etlExecutionId)
-                .orElseThrow(() -> new EntityNotFoundException("ETL-execution with id=" + etlExecutionId + " not found."));
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecution(etlExecutionId));
         EtlExecutionStatus status = etlExecutionStatusRepository
                 .findEtlExecutionStatusByName(EtlExecutionStatus.FAILED)
-                .orElseThrow(() -> new EntityNotFoundException("The required ETL execution status 'FAILED' was not found in the repository!"));
-        log.debug("The status 'FAILED' was found in the repository");
+                .orElseThrow(() -> EntityNotFoundException.forEtlExecutionStatus(EtlExecutionStatus.FAILED));
+        log.debug("The status '{}' was found in the repository", EtlExecutionStatus.FAILED);
         etlExecution.setStatus(status);
         etlExecution.setFinishedAt(failedAt);
         etlExecution.setComment(reason);

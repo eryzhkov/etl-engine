@@ -38,43 +38,37 @@ public class KafkaConfiguration {
     private final InstanceInfoManager instanceInfoManager;
 
     @Bean
-    public Map<String, Object> producerConfiguration() {
+    public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configuration = new HashMap<>();
         configuration.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configuration.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configuration.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CustomJsonSerializer.class);
-        return configuration;
-    }
 
-    @Bean
-    public ProducerFactory<String, Object> producerFactory() {
-        DefaultKafkaProducerFactory<String, Object> defaultKafkaProducerFactory = new DefaultKafkaProducerFactory<>(producerConfiguration());
-        defaultKafkaProducerFactory.setTransactionIdPrefix("eds-tx-" + instanceInfoManager.getInstanceId());
+        DefaultKafkaProducerFactory<String, Object> defaultKafkaProducerFactory = new DefaultKafkaProducerFactory<>(configuration);
+        defaultKafkaProducerFactory.setTransactionIdPrefix("ews-tx-" + instanceInfoManager.getInstanceId());
         return defaultKafkaProducerFactory;
     }
 
-    public Map<String, Object> consumerConfiguration() {
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> configuration = new HashMap<>();
         configuration.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configuration.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupName + "-" + instanceInfoManager.getInstanceId());
-        configuration.put(ConsumerConfig.CLIENT_ID_CONFIG, "eds-" + instanceInfoManager.getInstanceId());
+        configuration.put(ConsumerConfig.CLIENT_ID_CONFIG, "ews-" + instanceInfoManager.getInstanceId());
         configuration.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configuration.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configuration.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
         configuration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         configuration.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        return configuration;
-    }
 
-    @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfiguration());
+        return new DefaultKafkaConsumerFactory<>(configuration);
     }
 
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        // Only one topic will be consumed.
         factory.setConcurrency(1);
         return factory;
     }
@@ -100,6 +94,5 @@ public class KafkaConfiguration {
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
-
 
 }

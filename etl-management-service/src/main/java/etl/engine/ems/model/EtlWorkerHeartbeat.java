@@ -18,7 +18,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InstanceStatusReport {
+public class EtlWorkerHeartbeat {
 
     @JsonProperty("id")
     private UUID instanceId;

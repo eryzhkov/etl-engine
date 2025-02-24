@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import etl.engine.ems.model.InstanceStatusReport;
+import etl.engine.ems.model.EtlWorkerHeartbeat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -35,25 +35,25 @@ public class HeartbeatTopicListener {
     @KafkaHandler
     @Transactional("kafkaTransactionManager")
     public void listener(String message) {
-        log.debug("Raw message: {}", message);
+        log.debug("The raw message: {}", message);
         try {
             JsonNode document = mapper.readTree(message);
             JsonPointer infoTypePtr = JsonPointer.compile(INFO_TYPE_PTR);
             JsonPointer infoTimestampPtr = JsonPointer.compile(INFO_TIMESTAMP_PTR);
             final String infoType = document.at(infoTypePtr).asText();
             final String timestampValue = document.at(infoTimestampPtr).asText();
-            log.debug("notification = '{}'", infoType);
-            log.debug("timestamp = '{}'", timestampValue);
+            log.debug("info/type = '{}'", infoType);
+            log.debug("info/timestamp = '{}'", timestampValue);
             if (HEARTBEAT.equals(infoType)) {
                     JsonPointer payloadPtr = JsonPointer.compile(PAYLOAD_PTR);
                     JsonNode payloadNode = document.at(payloadPtr);
-                    InstanceStatusReport instanceStatusReport = mapper.treeToValue(payloadNode, InstanceStatusReport.class);
-                    instanceStatusReport.setReportedAt(OffsetDateTime.parse(timestampValue));
-                    log.debug("Extracted payload: {}", instanceStatusReport);
-                    etlInstanceService.saveInstanceStatusReport(instanceStatusReport);
-                    log.debug("The report was saved.");
+                    EtlWorkerHeartbeat etlWorkerHeartbeat = mapper.treeToValue(payloadNode, EtlWorkerHeartbeat.class);
+                    etlWorkerHeartbeat.setReportedAt(OffsetDateTime.parse(timestampValue));
+                    log.debug("Extracted heartbeat: {}", etlWorkerHeartbeat);
+                    etlInstanceService.saveInstanceStatusReport(etlWorkerHeartbeat);
+                    log.debug("The ETL-Worker heartbeat was processed.");
             } else {
-                log.warn("Unknown notification value at '{}'. Found: '{}'. Expected: '{}'. The message was ignored.",
+                log.warn("Unknown message type value at '{}'. Found: '{}' but expected '{}'. The message was ignored.",
                         INFO_TYPE_PTR,
                         HEARTBEAT,
                         infoType);
