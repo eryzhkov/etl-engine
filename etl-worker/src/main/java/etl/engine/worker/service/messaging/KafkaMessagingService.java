@@ -1,6 +1,7 @@
 package etl.engine.worker.service.messaging;
 
 import etl.engine.worker.model.messaging.EmsMessage;
+import etl.engine.worker.model.messaging.FailedProgressPayload;
 import etl.engine.worker.model.messaging.Info;
 import etl.engine.worker.model.messaging.InstanceInfoPayload;
 import etl.engine.worker.model.messaging.ProgressPayload;
@@ -76,6 +77,19 @@ public class KafkaMessagingService implements MessagingService {
                 ProgressPayload.builder()
                         .assignee(INSTANCE_ID)
                         .etlExecutionId(etlExecutionId)
+                        .build()
+        );
+        kafkaTemplate.send(progressTopicName, message);
+    }
+
+    @Override
+    public void failEtlExecution(UUID etlExecutionId, String reason) {
+        EmsMessage<Info, FailedProgressPayload> message = new EmsMessage<>(
+                new Info(Info.ETL_EXECUTION_FAILED),
+                FailedProgressPayload.failedBuilder()
+                        .assignee(INSTANCE_ID)
+                        .etlExecutionId(etlExecutionId)
+                        .reason(reason)
                         .build()
         );
         kafkaTemplate.send(progressTopicName, message);

@@ -1,10 +1,9 @@
-package etl.engine.worker;
+package etl.engine.worker.util;
 
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import etl.engine.worker.exception.InvalidNodeTypeException;
 import etl.engine.worker.exception.InvalidNodeValueException;
 import etl.engine.worker.exception.MissingNodeException;
@@ -17,13 +16,13 @@ public class JsonUtils {
     public static String readValueAsString(JsonNode document, String path)
             throws MissingNodeException, InvalidNodeTypeException {
         JsonNode node = document.at(JsonPointer.compile(path));
-        if (node instanceof NullNode) {
+        if (node.isNull()) {
             return null;
         }
-        if (node instanceof MissingNode) {
+        if (node.isMissingNode()) {
             throw MissingNodeException.forPath(path);
         }
-        if (node instanceof TextNode) {
+        if (node.isTextual()) {
             return document.at(JsonPointer.compile(path)).asText();
         } else {
             throw InvalidNodeTypeException.forPathAndType(path, "text");
@@ -33,13 +32,13 @@ public class JsonUtils {
     public static UUID readValueAsUUID(JsonNode document, String path)
             throws MissingNodeException, InvalidNodeTypeException, InvalidNodeValueException {
         JsonNode node = document.at(JsonPointer.compile(path));
-        if (node instanceof NullNode) {
+        if (node.isNull()) {
             throw new InvalidNodeValueException("The value for UUID cannot be NULL in the path = '" + path + "'!");
         }
-        if (node instanceof MissingNode) {
+        if (node.isMissingNode()) {
             throw MissingNodeException.forPath(path);
         }
-        if (node instanceof TextNode) {
+        if (node.isTextual()) {
             String value = document.at(JsonPointer.compile(path)).asText();
             try {
                 return UUID.fromString(value);
@@ -73,6 +72,14 @@ public class JsonUtils {
             throw MissingNodeException.forPath(path);
         }
         return node;
+    }
+
+    public static boolean isNodeMissing(JsonNode document, String path) {
+        return document.at(JsonPointer.compile(path)).isMissingNode();
+    }
+
+    public static boolean isNodeEmpty(JsonNode document, String path) {
+        return document.at(JsonPointer.compile(path)).isEmpty();
     }
 
 }

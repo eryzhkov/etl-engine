@@ -14,5 +14,6 @@ public interface MessagingService {
     void rejectEtlExecution(UUID etlExecutionId);
     void startEtlExecution(UUID etlExecutionId);
     void finishEtlExecution(UUID etlExecutionId);
+    void failEtlExecution(UUID etlExecutionId, String reason);
 
 }
