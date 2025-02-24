@@ -43,7 +43,7 @@ services:
       - EWS_STATUS_REPORTING_INITIAL_DELAY_MS=5000
       - EWS_STATUS_REPORTING_FIXED_RATE_MS=10000
     ports:
-      - "8082:8080"
+      - "8081:8080"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
       interval: 30s
@@ -75,8 +75,23 @@ services:
     ports:
       - "9092:9092"
 
+  # The simple UI manager for Apache Kafka
+  apache-kafka-hq:
+    image: tchiotludo/akhq
+    restart: unless-stopped
+    container_name: akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "etl-kafka:9092"
+    ports:
+      - "8082:8080"
+
   etl-postgres-db:
-    image: postgres:17-alpine
+    image: postgres:17-alpine@sha256:c4c3cded22488238ed0df51b82913b5d3b426fad19fbe205a711f05f5dba5c45
     container_name: etl-postgres-db
     restart: "no"
     environment:

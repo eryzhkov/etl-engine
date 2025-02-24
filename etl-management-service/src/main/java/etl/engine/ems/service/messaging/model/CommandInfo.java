@@ -12,12 +12,12 @@ public class CommandInfo {
 
     public static final String ETL_EXECUTION_ASSIGN = "etl-execution-assign";
 
-    private final String command;
+    private final String type;
     private final UUID assignee;
     private final OffsetDateTime timestamp;
 
-    public CommandInfo(String command, UUID assignee) {
-        this.command = command;
+    public CommandInfo(String type, UUID assignee) {
+        this.type = type;
         this.assignee = assignee;
         this.timestamp = OffsetDateTime.now();
     }

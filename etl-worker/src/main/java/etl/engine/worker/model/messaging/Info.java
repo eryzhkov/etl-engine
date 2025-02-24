@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 public class Info {
 
     public static final String HEARTBEAT = "heartbeat";
+    public static final String ETL_EXECUTION_ASSIGN = "etl-execution-assign";
     public static final String ETL_EXECUTION_ACCEPTED = "etl-execution-accepted";
     public static final String ETL_EXECUTION_STARTED = "etl-execution-started";
     public static final String ETL_EXECUTION_FINISHED = "etl-execution-finished";

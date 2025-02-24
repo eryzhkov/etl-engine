@@ -43,15 +43,19 @@ public class ProgressTopicListener {
                 if (EtlNotification.ETL_EXECUTION_ACCEPTED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-accepted
                     etlExecutionService.markEtlExecutionAsAcceptedAt(etlExecutionId, timestamp);
+                    log.debug("The ETL-execution with id = '{}' was accepted by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_EXECUTION_STARTED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-started
                     etlExecutionService.markEtlExecutionAsStartedAt(etlExecutionId, timestamp);
+                    log.debug("The ETL-execution with id = '{}' was started by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_EXECUTION_FINISHED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-finished
                     etlExecutionService.markEtlExecutionAsFinishedAt(etlExecutionId, timestamp);
+                    log.debug("The ETL-execution with id = '{}' was finished by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_EXECUTION_FAILED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-failed
                     etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp, getMessage(document));
+                    log.debug("The ETL-execution with id = '{}' was failed by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_DATA_STREAM_STARTED.equalsIgnoreCase(notification)) {
                     etlDataStreamExecutionService.startEtlDataStream(
                             etlExecutionId,
