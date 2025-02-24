@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Builder
@@ -13,6 +14,7 @@ import java.util.UUID;
 public class EtlExecutionAssignCommandPayload {
 
     private UUID etlExecutionId;
+    private OffsetDateTime lastRunAt;
     private Object configuration;
 
 }
