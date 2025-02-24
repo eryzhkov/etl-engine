@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import etl.engine.worker.exception.InvalidNodeTypeException;
 import etl.engine.worker.exception.InvalidNodeValueException;
 import etl.engine.worker.exception.MissingNodeException;
+import etl.engine.worker.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,11 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class JsonUtilsTest {
@@ -187,8 +190,47 @@ class JsonUtilsTest {
                     mapper.readTree(json),
                     "/unknownKey");
         });
+    }
 
+    @Test
+    void isNodeMissing() throws Exception {
+        final String json = """
+                {
+                  "key": {}
+                }
+                """;
+        assertTrue(JsonUtils.isNodeMissing(
+                mapper.readTree(json),
+                "/unknownKey"
+        ));
+    }
 
+    @Test
+    void isNodeEmpty() throws Exception {
+        final String json = """
+                {
+                  "key": {}
+                }
+                """;
+        assertTrue(JsonUtils.isNodeEmpty(
+                mapper.readTree(json),
+                "/key"
+        ));
+    }
+
+    @Test
+    void isNodeEmpty_forNonEmpty() throws Exception {
+        final String json = """
+                {
+                  "key": {
+                    "id": 1
+                  }
+                }
+                """;
+        assertFalse(JsonUtils.isNodeEmpty(
+                mapper.readTree(json),
+                "/key"
+        ));
     }
 
 }

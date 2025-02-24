@@ -1,9 +1,11 @@
 package etl.engine.worker.service.execution;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import etl.engine.worker.exception.InvalidEtlConfigurationException;
 import etl.engine.worker.model.EtlExecutionInfo;
 import etl.engine.worker.service.instance.InstanceInfoManager;
 import etl.engine.worker.service.messaging.MessagingService;
+import etl.engine.worker.validator.EtlConfigurationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -32,12 +34,14 @@ public class EtlExecutionManager {
                         .build()
         );
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            EtlConfigurationValidator.validate(configuration);
+            messagingService.finishEtlExecution(etlExecutionId);
+        } catch (InvalidEtlConfigurationException e) {
+            log.error("The execution is failed: {}.", e.getMessage());
+            messagingService.failEtlExecution(etlExecutionId, e.getMessage());
+        } finally {
+            instanceInfoManager.dropWorkload();
         }
-        instanceInfoManager.dropWorkload();
-        messagingService.finishEtlExecution(etlExecutionId);
         log.info("EXIT");
     }
 

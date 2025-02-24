@@ -59,7 +59,7 @@ public class ProgressTopicListener {
                     log.debug("The ETL-execution with id = '{}' was finished by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_EXECUTION_FAILED.equalsIgnoreCase(notification)) {
                     // Handle etl-execution-failed
-                    etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp, getMessage(document));
+                    etlExecutionService.markEtlExecutionAsFailedAt(etlExecutionId, timestamp, getReason(document));
                     log.debug("The ETL-execution with id = '{}' was failed by the worker.", etlExecutionId);
                 } else if (EtlNotification.ETL_DATA_STREAM_STARTED.equalsIgnoreCase(notification)) {
                     etlDataStreamExecutionService.startEtlDataStream(
@@ -118,8 +118,8 @@ public class ProgressTopicListener {
         return UUID.fromString(value);
     }
 
-    private String getMessage(JsonNode document) {
-        return document.at(JsonPointer.compile("/payload/message")).asText();
+    private String getReason(JsonNode document) {
+        return document.at(JsonPointer.compile("/payload/reason")).asText();
     }
 
     private String readValueAsString(JsonNode document, String path) {
