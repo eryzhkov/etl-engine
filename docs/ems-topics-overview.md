@@ -20,7 +20,7 @@ The expected status message structure is:
 ```json
 {
   "info": {
-    "type": "instance-status",
+    "type": "heartbeat",
     "timestamp": date-time
   },
   "payload": {
@@ -32,8 +32,8 @@ The expected status message structure is:
 
 where:
 
-- *id* is the unique ETL-service instance identifier (the random UUID value generated during instance starting up).
-- *state* is the instance state and should be onde of the - idle, busy.
+- *id* is the unique ETL-Worker instance identifier (the random UUID value generated during instance starting up).
+- *state* is the instance state and should be one of the - idle or busy.
 - *timestamp* is the date-date when the status was generated and published.
 
 EMS updates the *etl_instances* table using the messages.
@@ -42,7 +42,7 @@ EMS updates the *etl_instances* table using the messages.
 
 **Producer**: EMS.
 
-**Consumer**: all ETL-service instance of the DATA_EXTRACTOR type.
+**Consumer**: all ETL-Worker instances.
 
 **Message format**: JSON.
 
@@ -74,15 +74,11 @@ where:
 - *etlExecutionId* is the unique identifier of the ETL-execution created by EMS.
 - *configuration* is the ETL-configuration for the ETL-execution.
 
-The ETL-service instance should put the needed information from the command to the preparation queue of ETL executions.
-
-The preparation queue handler requests the ETL-configuration for the ETL-process first. If succeeded, an ETL-execution 
-job is created and enqueued to the ready-to-start queue. After that the handler should notify EMS via the *ems.progress* topic (see below) 
-that the ETL-execution is accepted.
+EMS updates the *assigned_at* value in the *etl_executions* table before the command is sent.
 
 ## The ems.progress topic
 
-**Producer**: all ETL-service instances except ETL Management Service (EMS).
+**Producer**: all ETL-Worker instances.
 
 **Consumer**: EMS.
 
@@ -92,9 +88,9 @@ that the ETL-execution is accepted.
 
 **Message retention time (ms)**: 180000 (180 sec)
 
-The topic is used by ETL-services to notify EMS about ETL-process execution.
+The topic is used by ETL-Worker services to notify EMS about ETL-process execution.
 
-### The 'ETL-execution accepted' notification
+### The 'ETL-execution accepted' message
 
 ```json
 {
@@ -103,15 +99,33 @@ The topic is used by ETL-services to notify EMS about ETL-process execution.
     "timestamp": date-time
   },
   "payload": {
-    "etlExecutionId": uuid
+    "etlExecutionId": uuid,
+    "assignee": uuid
   }
 }
 ```
-The notification is sent by EDS (ETL Data-Extractor Service) when an ETL-execution is ready to be started.
+The message is sent by ETL-Worker when the assigned ETL-execution can be started on the instance.
 
 EMS updates the *accepted_at* value in the *etl_executions* table using the information from the message.
 
-### The 'ETL-execution started' notification
+### The 'ETL-execution rejected' message
+
+```json
+{
+  "info": {
+    "type": "etl-execution-rejected",
+    "timestamp": date-time
+  },
+  "payload": {
+    "etlExecutionId": uuid,
+    "assignee": uuid
+  }
+}
+```
+
+The message is sent by the ETL-Worker if it already has an assignment and is still in processing.
+
+### The 'ETL-execution started' message
 
 ```json
 {
@@ -120,15 +134,16 @@ EMS updates the *accepted_at* value in the *etl_executions* table using the info
     "timestamp": date-time
   },
   "payload": {
-    "etlExecutionId": uuid
+    "etlExecutionId": uuid,
+    "assignee": uuid
   }
 }
 ```
-The notification is sent by EDS (ETL Data-Extractor Service) when an ETL-execution is started.
+The message is sent by ETL-Worker when an ETL-execution is started.
 
 EMS updates the *started_at* value in the *etl_executions* table using the information from the message.
 
-### The 'ETL-execution finished' notification
+### The 'ETL-execution finished' message
 
 ```json
 {
@@ -137,16 +152,37 @@ EMS updates the *started_at* value in the *etl_executions* table using the infor
     "timestamp": date-time
   },
   "payload": {
-    "etlExecutionId": uuid
+    "etlExecutionId": uuid,
+    "assignee": uuid
   }
 }
 ```
 
-The notification is sent by EDL (ETL Data-Loader Service).
+The message is sent by ETL-Worker service when ETL-execution is finished.
 
 EMS updates the *finished_at* value in the *etl_executions* table using the information from the message.
 
-### The 'ETL data stream started' notification
+### The 'ETL-execution failed' message
+
+```json
+{
+  "info": {
+    "type": "etl-execution-failed",
+    "timestamp": date-time
+  },
+  "payload": {
+    "etlExecutionId": uuid,
+    "assignee": uuid,
+    "reason": string
+  }
+}
+```
+
+The message is sent by ETL-Worker service when ETL-execution is failed for some reason.
+
+EMS updates the *finished_at* and *comment* values in the *etl_executions* table using the information from the message.
+
+### The 'ETL data stream started' message
 
 ```json
 {

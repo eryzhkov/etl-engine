@@ -1,5 +1,7 @@
 # Extract Data Service (EDS)
 
+THE SERVICE IS DEPRECATED!
+
 EDS is one of four ETL-services in the project. The main goal of one is to start an ETL-process by a command from the 
 ETL Management Service (EMS). The command has enough information to let EDS to get the ETL-specification from the EMS 
 via REST API. After that, EDS connects to an external data source, extract data and publish ones to the output topic as 
