@@ -30,7 +30,7 @@
     "data-stream-01": {
       "extract": {
         "query": {
-          "text": "select id, first_name, last_name, birth_date from persons",
+          "text": "select id, position_name, position_code from ext.positions",
           "parameters": []
         },
         "validators": {
@@ -38,19 +38,15 @@
             "type": "integer",
             "required": true
           },
-          "first_name": {
+          "position_name": {
             "type": "varchar",
             "required": true,
             "size": 50
           },
-          "last_name": {
+          "position_code": {
             "type": "varchar",
             "required": true,
             "size": 50
-          },
-          "birth_date": {
-            "type": "date",
-            "required": true
           }
         }
       },
@@ -60,9 +56,8 @@
             "operation": "shift",
             "spec": {
               "id": "id",
-              "first_name": "firstName",
-              "last_name": "lastName",
-              "birth_date": "birthDate"
+              "position_name": "positionName",
+              "position_code": "positionCode"
             }
           }
         ],
@@ -71,20 +66,25 @@
       "load": {
         "schema": "target",
         "tables": {
-          "ref_persons": {
+          "positions": {
             "id": {
               "column": "external_id"
             },
-            "firstName": {
-              "column": "first_name"
+            "positionName": {
+              "column": "position_name"
             },
-            "lastName": {
-              "column": "last_name"
-            },
-            "birthDate": {
-              "column": "birth_date"
+            "positionCode": {
+              "column": "position_code"
             }
           }
+        }
+      }
+    },
+    "data-stream-02": {
+      "extract": {
+        "query": {
+          "text": "select id, first_name, last_name from ext.persons",
+          "parameters": []
         }
       }
     }
